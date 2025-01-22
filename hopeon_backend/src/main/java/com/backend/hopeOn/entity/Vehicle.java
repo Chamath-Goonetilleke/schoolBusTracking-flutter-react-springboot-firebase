@@ -1,0 +1,39 @@
+package com.backend.hopeOn.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+@Getter
+@Setter
+@Entity(name = "vehicle")
+public class Vehicle extends AbstractEntity{
+    @Column(name = "vehicle_no")
+    private String vehicleNo;
+    @Column(name = "type")
+    private String type;
+    @Column(name = "color")
+    private String color;
+    @Column(name = "brand")
+    private String brand;
+    @Column(name = "model")
+    private String model;
+    @Column(name = "seat_count")
+    private Integer seatCount;
+    @Column(name = "available_seat_count")
+    private Integer availableSeatCount;
+    @Column(name = "route")
+    private String route;
+    @Column(name = "image_url")
+    private String imageUrl;
+    @Column(name = "locations")
+    private String locations;
+    @Column(name = "active")
+    private Boolean active;
+    @OneToOne(mappedBy = "vehicle")
+    private Driver driver;
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
+    private List<Student> studentList;
+}

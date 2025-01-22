@@ -1,62 +1,54 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
-import StudentCard from "../../components/StudentCard";
+import DriverCard from "../../components/DriverCard";
 
-const students = [
+const drivers = [
   {
-    regNo: "123456",
+    nicNo: "123456",
     fullName: "Chamath Goonetilleke",
-    grade: "Grade 5",
-    class: "E",
-    parentName: "Sunil",
     contactNo: "0788564256",
     gender: "Male",
     age: "15",
+    experience: "10 years",
     location: "Kesbewa Junction",
     imageUrl: "",
   },
   {
-    regNo: "123456",
+    nicNo: "123456",
     fullName: "Chamath Goonetilleke",
-    grade: "Grade 5",
-    class: "E",
-    parentName: "Sunil",
     contactNo: "0788564256",
     gender: "Male",
     age: "15",
+    experience: "10 years",
     location: "Kesbewa Junction",
     imageUrl: "",
   },
   {
-    regNo: "123456",
+    nicNo: "123456",
     fullName: "Chamath Goonetilleke",
-    grade: "Grade 5",
-    class: "E",
-    parentName: "Sunil",
     contactNo: "0788564256",
     gender: "Male",
     age: "15",
+    experience: "10 years",
     location: "Kesbewa Junction",
     imageUrl: "",
   },
   {
-    regNo: "123456",
+    nicNo: "123456",
     fullName: "Chamath Goonetilleke",
-    grade: "Grade 5",
-    class: "E",
-    parentName: "Sunil",
     contactNo: "0788564256",
     gender: "Male",
     age: "15",
+    experience: "10 years",
     location: "Kesbewa Junction",
     imageUrl: "",
   },
 ];
 
-export default function StudentGrid({
-  setIsStudentSelected,
-  setSelectedStudent,
+export default function DriversGrid({
+  setIsDriverSelected,
+  setSelectedDriver,
 }) {
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -65,15 +57,15 @@ export default function StudentGrid({
         spacing={{ xs: 2, md: 3 }}
         columns={{ xs: 7, sm: 9, md: 12 }}
       >
-        {students.map((student, index) => (
+        {drivers.map((driver, index) => (
           <Grid key={index} size={{ xs: 3, sm: 4, md: 4 }}>
             <div
               onClick={() => {
-                setSelectedStudent(student);
-                setIsStudentSelected(true);
+                setSelectedDriver(driver);
+                setIsDriverSelected(true);
               }}
             >
-              <StudentCard student={student} />
+              <DriverCard driver={driver} />
             </div>
           </Grid>
         ))}

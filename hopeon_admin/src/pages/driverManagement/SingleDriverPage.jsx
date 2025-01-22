@@ -18,10 +18,10 @@ const grades = [
   { id: 4, grade: "Grade 8", classes: ["A", "B", "C"] },
 ];
 
-export default function SingleStudentPage({
-  student,
-  setIsStudentSelected,
-  setSelectedStudent,
+export default function SingleDriverPage({
+  driver,
+  setIsDriverSelected,
+  setSelectedDriver,
 }) {
   const [selectedGrade, setSelectedGrade] = useState(1);
   const [selectedClasses, setSelectedClasses] = useState([]);
@@ -37,8 +37,8 @@ export default function SingleStudentPage({
       <div style={{ display: "flex", alignItems: "center" }}>
         <IconButton
           onClick={() => {
-            setIsStudentSelected(false);
-            setSelectedStudent(null);
+            setIsDriverSelected(false);
+            setSelectedDriver(null);
           }}
         >
           <ArrowBackIcon />

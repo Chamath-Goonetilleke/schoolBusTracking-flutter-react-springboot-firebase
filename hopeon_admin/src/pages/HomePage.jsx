@@ -13,6 +13,8 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
 import SettingsPage from "./settings/SettingsPage";
 import StudentManagementPage from "./studentManagement/StudentManagementPage";
+import DriverManagementPage from "./driverManagement/DriverManagementPage";
+import VehicleManagementPage from "./vehicleManagement/VehicleManagementPage";
 
 const NAVIGATION = [
   {
@@ -97,6 +99,8 @@ function DashboardLayoutNoMiniSidebar(props) {
       <DashboardLayout disableCollapsibleSidebar>
         {router.pathname === "/settings" && <SettingsPage />}
         {router.pathname === "/students" && <StudentManagementPage />}
+        {router.pathname === "/drivers" && <DriverManagementPage />}
+        {router.pathname === "/vehicles" && <VehicleManagementPage />}
       </DashboardLayout>
     </AppProvider>
   );

@@ -12,19 +12,19 @@ import EditGradeModal from "./EditGradeModal";
 import DeleteModal from "./common/DeleteModal";
 
 const rows = [
-  { id: 1, grade: "Snow", classes: "Jon" },
-  { id: 2, grade: "Lannister", classes: "Cersei" },
+  { id: 1, grade: "Grade 5", classes: "A, B, C" },
+  { id: 2, grade: "Grade 5", classes: "A, B, C" },
   {
     id: 3,
-    grade: "Lannister",
-    classes: "Jaime",
+    grade: "Grade 5",
+    classes: "A, B, C",
   },
-  { id: 4, grade: "Stark", classes: "Arya" },
-  { id: 5, grade: "Targaryen", classes: "Daenerys" },
-  { id: 6, grade: "Melisandre", classes: null },
-  { id: 7, grade: "Clifford", classes: "Ferrara" },
-  { id: 8, grade: "Frances", classes: "Rossini" },
-  { id: 9, grade: "Roxie", classes: "Harvey" },
+  { id: 4, grade: "Grade 5", classes: "A, B, C" },
+  { id: 5, grade: "Grade 5", classes: "A, B, C" },
+  { id: 6, grade: "Grade 5", classes: "A, B, C" },
+  { id: 7, grade: "Grade 5", classes: "A, B, C" },
+  { id: 8, grade: "Grade 5", classes: "A, B, C" },
+  { id: 9, grade: "Grade 5", classes: "A, B, C" },
 ];
 
 export default function GradesAndClassesTable() {
