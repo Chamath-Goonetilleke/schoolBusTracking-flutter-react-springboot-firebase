@@ -1,6 +1,5 @@
 package com.backend.hopeOn.domain;
 
-import com.backend.hopeOn.entity.Student;
 import lombok.Getter;
 import lombok.Setter;
 

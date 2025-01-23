@@ -39,4 +39,13 @@ public class StudentControllerImpl implements StudentController{
         }
     }
 
+    @Override
+    public HOResponse<Student> assignVehicle(Long id, Long vehicleId) {
+        try {
+            return studentService.assignVehicle(id, vehicleId);
+        }catch (Exception e){
+            throw new HOException(e.getMessage());
+        }
+    }
+
 }

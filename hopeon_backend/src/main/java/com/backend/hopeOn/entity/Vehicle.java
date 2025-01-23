@@ -34,6 +34,6 @@ public class Vehicle extends AbstractEntity{
     private Boolean active;
     @OneToOne(mappedBy = "vehicle")
     private Driver driver;
-    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vehicle")
     private List<Student> studentList;
 }

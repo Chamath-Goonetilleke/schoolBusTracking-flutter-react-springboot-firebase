@@ -29,7 +29,7 @@ public class Student extends AbstractEntity{
     private String location;
     @Column(name = "image_url")
     private String imageUrl;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName ="id")
     private Vehicle vehicle;
     @Column(name = "active")

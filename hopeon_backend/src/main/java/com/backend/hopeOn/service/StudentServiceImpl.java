@@ -1,24 +1,29 @@
 package com.backend.hopeOn.service;
 
 import com.backend.hopeOn.domain.Student;
+import com.backend.hopeOn.entity.Vehicle;
 import com.backend.hopeOn.generic.HOException;
 import com.backend.hopeOn.generic.HOResponse;
 import com.backend.hopeOn.repository.StudentRepository;
+import com.backend.hopeOn.repository.VehicleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService{
     private final StudentRepository studentRepository;
+    private final VehicleRepository vehicleRepository;
+
     @Override
     public HOResponse<List<Student>> findAll() {
 
-        List<Student> studentList = studentRepository.findAllByActiveIsTrue().stream().map(this::EntityToDomainMapper).toList();
+        List<Student> studentList = studentRepository.findAllByActiveIsTrue().stream().map(this::StudentEntityToDomainMapper).toList();
 
         HOResponse<List<Student>> response = new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
@@ -63,8 +68,36 @@ public class StudentServiceImpl implements StudentService{
 
         HOResponse<Student> response =  new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
-        response.setObject(EntityToDomainMapper(newStudent));
+        response.setObject(StudentEntityToDomainMapper(newStudent));
         response.setMessage("Student saved successfully");
+
+        return response;
+    }
+
+    @Override
+    public HOResponse<Student> assignVehicle(Long id, Long vehicleId) {
+
+        Optional<com.backend.hopeOn.entity.Student> optionalStudent = studentRepository.findByIdAndActiveIsTrue(id);
+        if(optionalStudent.isEmpty()){
+            throw new HOException("Student not found");
+        }
+
+        Optional<Vehicle> optionalVehicle = vehicleRepository.findByIdAndActiveIsTrue(vehicleId);
+        if(optionalVehicle.isEmpty()){
+            throw new HOException("Vehicle not found");
+        }
+
+        com.backend.hopeOn.entity.Student existingStudent = optionalStudent.get();
+        Vehicle vehicle = optionalVehicle.get();
+
+        existingStudent.setVehicle(vehicle);
+
+        com.backend.hopeOn.entity.Student updatedStudent = studentRepository.save(existingStudent);
+
+        HOResponse<Student> response = new HOResponse<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Vehicle assigned successfully");
+        response.setObject(StudentEntityToDomainMapper(updatedStudent));
 
         return response;
     }
@@ -79,7 +112,7 @@ public class StudentServiceImpl implements StudentService{
         return null;
     }
 
-    private Student EntityToDomainMapper(com.backend.hopeOn.entity.Student studentEntity) {
+    public Student StudentEntityToDomainMapper(com.backend.hopeOn.entity.Student studentEntity) {
         if (studentEntity == null) {
             return null;
         }
