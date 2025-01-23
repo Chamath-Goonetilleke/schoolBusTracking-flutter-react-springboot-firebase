@@ -24,7 +24,7 @@ public class Student extends AbstractEntity{
     @Column(name = "gender")
     private String gender;
     @Column(name = "age")
-    private String age;
+    private Integer age;
     @Column(name = "location")
     private String location;
     @Column(name = "image_url")
@@ -32,4 +32,6 @@ public class Student extends AbstractEntity{
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "vehicle_id", referencedColumnName ="id")
     private Vehicle vehicle;
+    @Column(name = "active")
+    private Boolean active;
 }

@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/vehicle")
 @RequiredArgsConstructor
 public class VehicleControllerImpl implements VehicleController{
-    private VehicleService vehicleService;
+    //private VehicleService vehicleService;
 }

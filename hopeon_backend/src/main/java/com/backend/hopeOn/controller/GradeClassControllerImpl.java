@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/grade-class")
 @RequiredArgsConstructor
 public class GradeClassControllerImpl implements GradeClassController {
-    private final GradeClassService gradeClassService;
+   // private final GradeClassService gradeClassService;
 }
