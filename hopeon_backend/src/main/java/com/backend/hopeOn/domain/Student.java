@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Student extends AbstractModel{
+public class Student extends User{
     private String regNo;
     private String fullName;
     private String grade;

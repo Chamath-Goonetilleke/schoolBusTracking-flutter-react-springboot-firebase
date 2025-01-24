@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Driver extends AbstractModel{
+public class Driver extends User{
     private String nicNo;
     private String licenseNo;
     private String contactNo;

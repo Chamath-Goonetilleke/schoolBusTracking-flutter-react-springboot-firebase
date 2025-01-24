@@ -2,10 +2,13 @@ package com.backend.hopeOn.service;
 
 import com.backend.hopeOn.domain.Driver;
 import com.backend.hopeOn.entity.Vehicle;
+import com.backend.hopeOn.enums.UserType;
 import com.backend.hopeOn.generic.HOException;
 import com.backend.hopeOn.generic.HOResponse;
 import com.backend.hopeOn.repository.DriverRepository;
+import com.backend.hopeOn.repository.UserRepository;
 import com.backend.hopeOn.repository.VehicleRepository;
+import com.backend.hopeOn.util.PasswordHashingUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,7 +20,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class DriverServiceImpl implements DriverService {
-
+    private final UserRepository userRepository;
     private final DriverRepository driverRepository;
     private final VehicleRepository vehicleRepository;
 
@@ -54,11 +57,11 @@ public class DriverServiceImpl implements DriverService {
     public HOResponse<Driver> assignVehicle(Long id, Long vehicleId) {
         Optional<com.backend.hopeOn.entity.Driver> optionalDriver = driverRepository.findByIdAndActiveIsTrue(id);
         if(optionalDriver.isEmpty()){
-            throw new HOException("Driver not found");
+            throw new HOException("Driver not found", HttpStatus.BAD_REQUEST);
         }
         Optional<Vehicle> optionalVehicle = vehicleRepository.findByIdAndActiveIsTrue(vehicleId);
         if(optionalVehicle.isEmpty()){
-            throw new HOException("Vehicle not found");
+            throw new HOException("Vehicle not found", HttpStatus.BAD_REQUEST);
         }
 
         com.backend.hopeOn.entity.Driver existingDriver = optionalDriver.get();
@@ -80,7 +83,7 @@ public class DriverServiceImpl implements DriverService {
     public HOResponse<Driver> save(Driver driver) {
         validateDriver(driver);
 
-        com.backend.hopeOn.entity.Driver newDriver = driverRepository.save(domainToEntityMapper(driver));
+        com.backend.hopeOn.entity.Driver newDriver = userRepository.save(domainToEntityMapper(driver));
 
         HOResponse<Driver> response = new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
@@ -131,6 +134,9 @@ public class DriverServiceImpl implements DriverService {
 
         Driver driverDomain = new Driver();
         driverDomain.setId(driverEntity.getId());
+        driverDomain.setEmail(driverEntity.getEmail());
+        driverDomain.setType(driverEntity.getType());
+        driverDomain.setFullName(driverEntity.getFullName());
         driverDomain.setNicNo(driverEntity.getNicNo());
         driverDomain.setLicenseNo(driverEntity.getLicenseNo());
         driverDomain.setContactNo(driverEntity.getContactNo());
@@ -150,7 +156,13 @@ public class DriverServiceImpl implements DriverService {
     private com.backend.hopeOn.entity.Driver domainToEntityMapper(Driver driverDomain) {
         if (driverDomain == null) return null;
 
+        PasswordHashingUtil passwordHashingUtil = new PasswordHashingUtil();
+
         com.backend.hopeOn.entity.Driver driverEntity = new com.backend.hopeOn.entity.Driver();
+        driverEntity.setEmail(driverDomain.getEmail());
+        driverEntity.setPassword(passwordHashingUtil.hashPassword(driverDomain.getPassword()));
+        driverEntity.setType(UserType.DRIVER);
+        driverEntity.setFullName(driverDomain.getFullName());
         driverEntity.setNicNo(driverDomain.getNicNo());
         driverEntity.setLicenseNo(driverDomain.getLicenseNo());
         driverEntity.setContactNo(driverDomain.getContactNo());

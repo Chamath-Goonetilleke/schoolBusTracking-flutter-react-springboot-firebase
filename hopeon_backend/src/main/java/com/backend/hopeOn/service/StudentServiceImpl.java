@@ -2,10 +2,13 @@ package com.backend.hopeOn.service;
 
 import com.backend.hopeOn.domain.Student;
 import com.backend.hopeOn.entity.Vehicle;
+import com.backend.hopeOn.enums.UserType;
 import com.backend.hopeOn.generic.HOException;
 import com.backend.hopeOn.generic.HOResponse;
 import com.backend.hopeOn.repository.StudentRepository;
+import com.backend.hopeOn.repository.UserRepository;
 import com.backend.hopeOn.repository.VehicleRepository;
+import com.backend.hopeOn.util.PasswordHashingUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService{
+    private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final VehicleRepository vehicleRepository;
 
@@ -64,7 +68,7 @@ public class StudentServiceImpl implements StudentService{
             throw new HOException("Student contact no cannot be empty");
         }
 
-        com.backend.hopeOn.entity.Student newStudent = studentRepository.save(DomainToEntityMapper(student));
+        com.backend.hopeOn.entity.Student newStudent = userRepository.save(DomainToEntityMapper(student));
 
         HOResponse<Student> response =  new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
@@ -119,6 +123,8 @@ public class StudentServiceImpl implements StudentService{
 
         Student studentDomain = new Student();
         studentDomain.setId(studentEntity.getId());
+        studentDomain.setEmail(studentEntity.getEmail());
+        studentDomain.setType(studentEntity.getType());
         studentDomain.setRegNo(studentEntity.getRegNo());
         studentDomain.setFullName(studentEntity.getFullName());
         studentDomain.setGrade(studentEntity.getGrade());
@@ -145,7 +151,12 @@ public class StudentServiceImpl implements StudentService{
 
         com.backend.hopeOn.entity.Student studentEntity = new com.backend.hopeOn.entity.Student();
 
+        PasswordHashingUtil passwordHashingUtil = new PasswordHashingUtil();
+
         studentEntity.setRegNo(studentDomain.getRegNo());
+        studentEntity.setEmail(studentDomain.getEmail());
+        studentEntity.setPassword(passwordHashingUtil.hashPassword(studentDomain.getPassword()));
+        studentEntity.setType(UserType.STUDENT);
         studentEntity.setFullName(studentDomain.getFullName());
         studentEntity.setGrade(studentDomain.getGrade());
         studentEntity.setStudentClass(studentDomain.getStudentClass());

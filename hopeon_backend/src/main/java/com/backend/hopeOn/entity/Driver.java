@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity(name = "driver")
-public class Driver extends AbstractEntity{
+public class Driver extends User{
     @Column(name = "nic_no")
     private String nicNo;
     @Column(name = "license_no")
@@ -24,8 +24,6 @@ public class Driver extends AbstractEntity{
     private String location;
     @Column(name = "image_url")
     private String imageUrl;
-    @Column(name = "active")
-    private Boolean active;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
     private Vehicle vehicle;

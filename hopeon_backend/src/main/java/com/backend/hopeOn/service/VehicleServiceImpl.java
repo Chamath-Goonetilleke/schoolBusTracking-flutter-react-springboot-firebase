@@ -109,13 +109,15 @@ public class VehicleServiceImpl implements VehicleService {
 
         if (vehicleEntity.getDriver() != null) {
             vehicleDomain.setDriverId(vehicleEntity.getDriver().getId());
-            vehicleDomain.setDriverName(vehicleEntity.getDriver().getNicNo());
+            vehicleDomain.setDriverName(vehicleEntity.getDriver().getFullName());
         }
 
-        List<Student> studentList = new ArrayList<>();
-        vehicleEntity.getStudentList().forEach(student -> studentList.add(studentService.StudentEntityToDomainMapper(student)));
+        if(!vehicleEntity.getStudentList().isEmpty()){
+            List<Student> studentList = new ArrayList<>();
+            vehicleEntity.getStudentList().forEach(student -> studentList.add(studentService.StudentEntityToDomainMapper(student)));
 
-        vehicleDomain.setStudentList(studentList);
+            vehicleDomain.setStudentList(studentList);
+        }
 
         return vehicleDomain;
     }

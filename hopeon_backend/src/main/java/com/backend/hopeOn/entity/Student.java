@@ -2,17 +2,16 @@ package com.backend.hopeOn.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity(name = "student")
-public class Student extends AbstractEntity{
+public class Student extends User{
 
     @Column(name = "reg_no")
     private String regNo;
-    @Column(name = "full_name")
-    private String fullName;
     @Column(name = "grade")
     private String grade;
     @Column(name = "student_class")
@@ -32,6 +31,4 @@ public class Student extends AbstractEntity{
     @ManyToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName ="id")
     private Vehicle vehicle;
-    @Column(name = "active")
-    private Boolean active;
 }

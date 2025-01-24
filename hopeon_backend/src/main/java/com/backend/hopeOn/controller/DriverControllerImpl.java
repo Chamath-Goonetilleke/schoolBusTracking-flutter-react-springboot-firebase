@@ -5,6 +5,7 @@ import com.backend.hopeOn.generic.HOException;
 import com.backend.hopeOn.generic.HOResponse;
 import com.backend.hopeOn.service.DriverService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
