@@ -24,7 +24,7 @@ export default function StudentCard({student}) {
             component="div"
             sx={{ color: "text.secondary" }}
           >
-            {student.grade+" - "+student.class}
+            {student.grade+" - "+student.studentClass}
           </Typography>
         </CardContent>
         <Box sx={{ display: "flex", alignItems: "center", pl: 2, pb: 2 }}>

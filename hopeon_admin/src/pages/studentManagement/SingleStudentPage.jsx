@@ -19,19 +19,24 @@ const grades = [
 ];
 
 export default function SingleStudentPage({
-  student,
+  selectedStudent,
   setIsStudentSelected,
   setSelectedStudent,
 }) {
   const [selectedGrade, setSelectedGrade] = useState(1);
   const [selectedClasses, setSelectedClasses] = useState([]);
+  const [student, setStudent] = useState({ ...selectedStudent });
 
-  const onSelectGrade = (e) => {
-    setSelectedGrade(e.target.value);
-    const selectedGrade = grades.filter(g=> g.id === e.target.value)[0];
-    setSelectedClasses(selectedGrade.classes)
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setStudent({ ...student, [name]: value });
   };
-
+  const handleGradeChange = (e) => {
+    const selectedGradeId = e.target.value;
+    const selectedGrade = grades.find((g) => g.id === selectedGradeId);
+    setStudent({ ...student, grade: selectedGradeId, studentClass: "" });
+    setSelectedClasses(selectedGrade.classes || []);
+  };
   return (
     <div style={{ margin: "2rem" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -44,13 +49,13 @@ export default function SingleStudentPage({
           <ArrowBackIcon />
         </IconButton>
       </div>
-      <div style={{ display: "flex", height: "80vh" }}>
+      <div style={{ display: "flex", height: "80vh", marginBottom: "2rem" }}>
         <div
           style={{
             display: "flex",
             flex: 1,
             flexDirection: "column",
-           
+
             alignItems: "center",
             width: "100%",
           }}
@@ -62,25 +67,55 @@ export default function SingleStudentPage({
               style={{ width: 170, height: 170 }}
             />
           </div>
-          <div style={{display:'flex', justifyContent:'flex-end', width:'90%', }} >
-            <Button variant="contained" startIcon={<EditNoteIcon/>} >Edit</Button>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              width: "90%",
+            }}
+          >
+            <Button variant="contained" startIcon={<EditNoteIcon />}>
+              Edit
+            </Button>
           </div>
           <div style={{ width: "90%" }}>
             <TextField
               fullWidth
               margin="normal"
+              name="regNo"
               label="Registration Number"
               variant="outlined"
+              value={student.regNo}
+              onChange={handleInputChange}
             />
-            <TextField fullWidth label="Full Name" variant="outlined" />
+            <TextField
+              fullWidth
+              margin="normal"
+              name="email"
+              type="email"
+              label="Email"
+              variant="outlined"
+              value={student.email}
+              onChange={handleInputChange}
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              name="fullName"
+              label="Full Name"
+              variant="outlined"
+              value={student.fullName}
+              onChange={handleInputChange}
+            />
             <div style={{ display: "flex" }}>
               <FormControl sx={{ marginTop: 2, marginRight: 1, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Grade</InputLabel>
+                {/* <InputLabel id="grade-label">Grade</InputLabel>
                 <Select
-                  labelId="demo-multiple-name-label"
+                  labelId="grade-label"
                   label="Grade"
-                  value={selectedGrade}
-                  onChange={onSelectGrade}
+                  name="grade"
+                  value={student.grade}
+                  onChange={handleGradeChange}
                 >
                   {grades.map((grade) => (
                     <MenuItem key={grade.id} value={grade.id}>
@@ -88,46 +123,83 @@ export default function SingleStudentPage({
                     </MenuItem>
                   ))}
                 </Select>
+                 */}
+                <TextField
+                  fullWidth
+                  name="grade"
+                  label="Grade"
+                  variant="outlined"
+                  value={student.grade}
+                  sx={{ marginRight: 1 }}
+                />
               </FormControl>
               <FormControl sx={{ marginTop: 2, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Class</InputLabel>
-                <Select labelId="demo-multiple-name-label" label="class">
+                {/* <InputLabel id="class-label">Class</InputLabel>
+                <Select
+                  labelId="class-label"
+                  label="Class"
+                  name="studentClass"
+                  value={student.studentClass}
+                  onChange={handleInputChange}
+                >
                   {selectedClasses.map((cls) => (
                     <MenuItem key={cls} value={cls}>
                       {cls}
                     </MenuItem>
                   ))}
-                </Select>
+                </Select> */}
+                <TextField
+                  fullWidth
+                  label="Class"
+                  name="studentClass"
+                  value={student.studentClass}
+                  variant="outlined"
+                  sx={{ marginRight: 1 }}
+                />
               </FormControl>
             </div>
             <TextField
-              margin="dense"
+              margin="normal"
               fullWidth
+              name="parentName"
               label="Parent Name"
               variant="outlined"
+              value={student.parentName}
+              onChange={handleInputChange}
             />
             <div style={{ display: "flex" }}>
               <TextField
                 margin="dense"
                 fullWidth
+                name="contactNo"
                 label="Contact Number"
                 variant="outlined"
+                value={student.contactNo}
+                onChange={handleInputChange}
                 sx={{ marginRight: 1 }}
               />
               <FormControl sx={{ marginTop: 1, marginRight: 1, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Gender</InputLabel>
-                <Select labelId="demo-multiple-name-label" label="Gender">
-                  <MenuItem key="Male" value="Male">
-                    Male
-                  </MenuItem>
-                  <MenuItem key="Female" value="Female">
-                    Female
-                  </MenuItem>
+                <InputLabel id="gender-label">Gender</InputLabel>
+                <Select
+                  labelId="gender-label"
+                  label="Gender"
+                  name="gender"
+                  value={student.gender}
+                  onChange={handleInputChange}
+                >
+                  <MenuItem value="Male">Male</MenuItem>
+                  <MenuItem value="Female">Female</MenuItem>
                 </Select>
               </FormControl>
               <FormControl sx={{ marginTop: 1, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Age</InputLabel>
-                <Select labelId="demo-multiple-name-label" label="Age">
+                <InputLabel id="age-label">Age</InputLabel>
+                <Select
+                  labelId="age-label"
+                  label="Age"
+                  name="age"
+                  value={student.age}
+                  onChange={handleInputChange}
+                >
                   {Array.from(Array(18)).map((_, index) => (
                     <MenuItem key={index} value={index + 1}>
                       {index + 1}
@@ -139,8 +211,11 @@ export default function SingleStudentPage({
             <TextField
               margin="dense"
               fullWidth
+              name="location"
               label="Location"
               variant="outlined"
+              value={student.location}
+              onChange={handleInputChange}
             />
           </div>
         </div>
@@ -149,7 +224,6 @@ export default function SingleStudentPage({
             display: "flex",
             flex: 2,
             width: "100%",
-           
           }}
         ></div>
       </div>

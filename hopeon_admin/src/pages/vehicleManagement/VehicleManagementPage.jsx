@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SingleVehiclePage from "./SingleVehiclePage";
 import VehicleGrid from "./VehicleGrid";
+import AddVehicleModal from "../../components/AddVehicleModal";
 
 export default function VehicleManagementPage() {
     const [isVehicleSelected, setIsVehicleSelected] = React.useState(false);
@@ -25,9 +26,7 @@ export default function VehicleManagementPage() {
               padding: "1rem",
             }}
           >
-            <Button variant="outlined" startIcon={<AddIcon />}>
-              Add New Vehicle
-            </Button>
+           <AddVehicleModal/>
           </div>
           <VehicleGrid setIsVehicleSelected={setIsVehicleSelected} setSelectedVehicle={setSelectedVehicle} />
         </div>

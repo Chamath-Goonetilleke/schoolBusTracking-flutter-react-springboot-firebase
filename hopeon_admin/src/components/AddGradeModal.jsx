@@ -4,15 +4,16 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import { useTheme } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
 import { TextField } from "@mui/material";
+import { saveGradeClass } from "../service/gradeClassService";
 
-export default function AddGradeModal() {
+export default function AddGradeModal({ fetchAllGradeClasses }) {
   const [open, setOpen] = React.useState(false);
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const [gradeClass, setGradeClass] = React.useState({
+    grade: "",
+    classes: "",
+  });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -20,6 +21,22 @@ export default function AddGradeModal() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setGradeClass((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const submit = async () => {
+    await saveGradeClass(gradeClass)
+      .then(() => {
+        fetchAllGradeClasses();
+        handleClose();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -32,35 +49,39 @@ export default function AddGradeModal() {
         Add new Grade
       </Button>
       <Dialog
-        fullScreen={fullScreen}
         open={open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
       >
-        <DialogTitle id="responsive-dialog-title">
-          {"Add New Grade and Classes"}
-        </DialogTitle>
+        <DialogTitle>{"Add New Grade and Classes"}</DialogTitle>
         <DialogContent>
-          <div style={{ padding: "1rem", display:'flex', flexDirection:'column' }}>
+          <div
+            style={{
+              padding: "1rem",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <TextField
               required
               label="Grade"
-              placeholder="Grade 5"
-              style={{marginBottom:'1rem', width:'50vh'}}
+              name="grade"
+              value={gradeClass.grade}
+              onChange={handleInputChange}
+              style={{ marginBottom: "1rem", width: "50vh" }}
             />
             <TextField
               label="Classes"
-              placeholder="eg: A, B, C "
+              name="classes"
+              value={gradeClass.classes}
+              onChange={handleInputChange}
+              placeholder="e.g., A, B, C"
             />
           </div>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleClose} autoFocus>
-            Save
-          </Button>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={submit}>Save</Button>
         </DialogActions>
       </Dialog>
     </React.Fragment>

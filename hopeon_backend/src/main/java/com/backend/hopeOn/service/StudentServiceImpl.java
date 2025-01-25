@@ -49,28 +49,47 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public HOResponse<Student> save(Student student) {
+        HOResponse<Student> response =  new HOResponse<>();
+
         if(!StringUtils.hasText(student.getRegNo())){
-            throw new HOException("Student registration number cannot be empty");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student registration number cannot be empty");
+            return response;
         }
         if(!StringUtils.hasText(student.getFullName())){
-            throw new HOException("Student name cannot be empty");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student name cannot be empty");
+            return response;
         }
         if(!StringUtils.hasText(student.getGrade())){
-            throw new HOException("Student grade cannot be empty");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student grade cannot be empty");
+            return response;
         }
         if(!StringUtils.hasText(student.getStudentClass())){
-            throw new HOException("Student class cannot be empty");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student class cannot be empty");
+            return response;
         }
         if(!StringUtils.hasText(student.getParentName())){
-            throw new HOException("Student parent name be empty");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student parent name be empty");
+            return response;
         }
         if(!StringUtils.hasText(student.getContactNo())){
-            throw new HOException("Student contact no cannot be empty");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student contact no cannot be empty");
+            return response;
+        }
+        Optional<com.backend.hopeOn.entity.Student> optionalStudent = studentRepository.findByRegNoAndActiveIsTrue(student.getRegNo());
+        if(optionalStudent.isPresent()) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student already has an account");
+            return response;
         }
 
         com.backend.hopeOn.entity.Student newStudent = userRepository.save(DomainToEntityMapper(student));
 
-        HOResponse<Student> response =  new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
         response.setObject(StudentEntityToDomainMapper(newStudent));
         response.setMessage("Student saved successfully");
@@ -80,15 +99,20 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public HOResponse<Student> assignVehicle(Long id, Long vehicleId) {
+        HOResponse<Student> response = new HOResponse<>();
 
         Optional<com.backend.hopeOn.entity.Student> optionalStudent = studentRepository.findByIdAndActiveIsTrue(id);
         if(optionalStudent.isEmpty()){
-            throw new HOException("Student not found");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student not found");
+            return response;
         }
 
         Optional<Vehicle> optionalVehicle = vehicleRepository.findByIdAndActiveIsTrue(vehicleId);
         if(optionalVehicle.isEmpty()){
-            throw new HOException("Vehicle not found");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Vehicle not found");
+            return response;
         }
 
         com.backend.hopeOn.entity.Student existingStudent = optionalStudent.get();
@@ -98,7 +122,6 @@ public class StudentServiceImpl implements StudentService{
 
         com.backend.hopeOn.entity.Student updatedStudent = studentRepository.save(existingStudent);
 
-        HOResponse<Student> response = new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Vehicle assigned successfully");
         response.setObject(StudentEntityToDomainMapper(updatedStudent));

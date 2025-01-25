@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import { Button } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import DriversGrid from "./DriversGrid";
 import SingleDriverPage from "./SingleDriverPage";
+import AddDriverModal from "../../components/AddDriverModel";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -52,6 +51,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function DriverManagementPage() {
   const [isDriverSelected, setIsDriverSelected] = React.useState(false);
   const [selectedDriver, setSelectedDriver] = React.useState(null);
+  const [fetchAllDrivers, setFetchAllDrivers] = useState(() => () => {});
   if (isDriverSelected === true) {
     return (
       <SingleDriverPage
@@ -79,13 +79,12 @@ export default function DriverManagementPage() {
               inputProps={{ "aria-label": "search" }}
             />
           </Search>
-          <Button variant="outlined" startIcon={<AddIcon />}>
-            Add New Driver
-          </Button>
+          <AddDriverModal fetchAllDrivers={fetchAllDrivers} />
         </div>
         <DriversGrid
           setIsDriverSelected={setIsDriverSelected}
           setSelectedDriver={setSelectedDriver}
+          setFetchAllDrivers={setFetchAllDrivers}
         />
       </div>
     );

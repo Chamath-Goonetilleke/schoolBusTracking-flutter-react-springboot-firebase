@@ -16,6 +16,8 @@ public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpec
 
     List<Student> findAllByActiveIsTrue();
     Optional<Student> findByIdAndActiveIsTrue(Long id);
+    Optional<Student> findByRegNoAndActiveIsTrue(String regNo);
+
 
 //    @Query("SELECT new com.backend.hopeOn.response.StudentResponse(s.id, s.regNo, s.fullName, s.grade, s.studentClass, s.parentName, s.contactNo, s.gender, s.age, s.location, s.imageUrl, s.active) " +
 //            "FROM student s " +

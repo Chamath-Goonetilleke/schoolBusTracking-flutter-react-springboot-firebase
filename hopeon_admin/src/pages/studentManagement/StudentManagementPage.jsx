@@ -3,9 +3,8 @@ import StudentGrid from "./StudentGrid";
 import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
-import { Button } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import SingleStudentPage from "./SingleStudentPage";
+import AddStudentModal from "../../components/AddStudentModal";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -52,10 +51,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function StudentManagementPage() {
     const [isStudentSelected, setIsStudentSelected] = React.useState(false);
     const [selectedStudent, setSelectedStudent] = React.useState(null);
+    const [fetchAllStudent, setFetchAllStudent] = React.useState(
+      () => () => {}
+    );
     if (isStudentSelected === true) {
       return (
         <SingleStudentPage
-          student={selectedStudent}
+          selectedStudent={selectedStudent}
           setIsStudentSelected={setIsStudentSelected}
           setSelectedStudent={setSelectedStudent}
         />
@@ -79,11 +81,9 @@ export default function StudentManagementPage() {
                 inputProps={{ "aria-label": "search" }}
               />
             </Search>
-            <Button variant="outlined" startIcon={<AddIcon />}>
-              Add New Student
-            </Button>
+            <AddStudentModal fetchAllStudents={fetchAllStudent}/>
           </div>
-          <StudentGrid setIsStudentSelected={setIsStudentSelected} setSelectedStudent={setSelectedStudent} />
+          <StudentGrid setIsStudentSelected={setIsStudentSelected} setSelectedStudent={setSelectedStudent} setFetchAllStudents={setFetchAllStudent} />
         </div>
       );
     }

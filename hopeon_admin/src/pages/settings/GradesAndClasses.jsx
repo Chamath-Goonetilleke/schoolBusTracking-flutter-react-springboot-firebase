@@ -1,7 +1,12 @@
 import React from "react";
 import GradesAndClassesTable from "../../components/GradesAndClassesTable";
 import AddGradeModal from "../../components/AddGradeModal";
+
 export default function GradesAndClasses() {
+  const [fetchDataFunction, setFetchDataFunction] = React.useState(
+    () => () => {}
+  );
+
   return (
     <div>
       <div
@@ -11,9 +16,9 @@ export default function GradesAndClasses() {
           marginBottom: "1rem",
         }}
       >
-        <AddGradeModal />
+        <AddGradeModal fetchAllGradeClasses={fetchDataFunction} />
       </div>
-      <GradesAndClassesTable />
+      <GradesAndClassesTable setFetchDataFunction={setFetchDataFunction} />
     </div>
   );
 }

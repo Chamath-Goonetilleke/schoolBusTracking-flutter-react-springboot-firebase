@@ -55,13 +55,16 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public HOResponse<Driver> assignVehicle(Long id, Long vehicleId) {
+        HOResponse<Driver> response = new HOResponse<>();
         Optional<com.backend.hopeOn.entity.Driver> optionalDriver = driverRepository.findByIdAndActiveIsTrue(id);
         if(optionalDriver.isEmpty()){
             throw new HOException("Driver not found", HttpStatus.BAD_REQUEST);
         }
         Optional<Vehicle> optionalVehicle = vehicleRepository.findByIdAndActiveIsTrue(vehicleId);
         if(optionalVehicle.isEmpty()){
-            throw new HOException("Vehicle not found", HttpStatus.BAD_REQUEST);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Vehicle not found");
+            return response;
         }
 
         com.backend.hopeOn.entity.Driver existingDriver = optionalDriver.get();
@@ -71,7 +74,7 @@ public class DriverServiceImpl implements DriverService {
 
         com.backend.hopeOn.entity.Driver updatedDriver =  driverRepository.save(existingDriver);
 
-        HOResponse<Driver> response = new HOResponse<>();
+
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Vehicle assigned successfully");
         response.setObject(entityToDomainMapper(updatedDriver));
@@ -81,11 +84,21 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public HOResponse<Driver> save(Driver driver) {
-        validateDriver(driver);
+        HOResponse<Driver> response = new HOResponse<>();
+
+        if(validateDriver(driver) != null) {
+            return validateDriver(driver);
+        }
+
+        Optional<com.backend.hopeOn.entity.Driver> optionalDriver =  driverRepository.findByNicNoAndActiveIsTrue(driver.getNicNo());
+        if (optionalDriver.isPresent()) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Driver already has an account");
+            return response;
+        }
 
         com.backend.hopeOn.entity.Driver newDriver = userRepository.save(domainToEntityMapper(driver));
 
-        HOResponse<Driver> response = new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Driver saved successfully.");
         response.setObject(entityToDomainMapper(newDriver));
@@ -95,7 +108,9 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public HOResponse<Driver> update(Driver driver) {
-        validateDriver(driver);
+        if(validateDriver(driver) != null) {
+            return validateDriver(driver);
+        }
 
         com.backend.hopeOn.entity.Driver updatedDriver = driverRepository.save(domainToEntityMapper(driver));
 
@@ -117,16 +132,25 @@ public class DriverServiceImpl implements DriverService {
         return response;
     }
 
-    private void validateDriver(Driver driver) {
+    private HOResponse<Driver> validateDriver(Driver driver) {
+        HOResponse<Driver> response = new HOResponse<>();
+
         if (!StringUtils.hasText(driver.getNicNo())) {
-            throw new HOException("Driver NIC cannot be empty");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Driver NIC cannot be empty");
+            return response;
         }
         if (!StringUtils.hasText(driver.getLicenseNo())) {
-            throw new HOException("Driver license number cannot be empty");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Driver license number cannot be empty");
+            return response;
         }
         if (!StringUtils.hasText(driver.getContactNo())) {
-            throw new HOException("Driver contact number cannot be empty");
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Driver contact number cannot be empty");
+            return response;
         }
+        return null;
     }
 
     private Driver entityToDomainMapper(com.backend.hopeOn.entity.Driver driverEntity) {

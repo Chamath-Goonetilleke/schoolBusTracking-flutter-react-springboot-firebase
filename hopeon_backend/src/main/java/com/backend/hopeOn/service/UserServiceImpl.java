@@ -60,9 +60,12 @@ public class UserServiceImpl implements UserService {
         }else{
             existingUser.setPassword(passwordHashingUtil.hashPassword(passwordResetRequest.getNewPassword()));
         }
+
+        userRepository.save(existingUser);
+
         HOResponse<String> response = new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Password reset successfully");
-        return null;
+        return response;
     }
 }

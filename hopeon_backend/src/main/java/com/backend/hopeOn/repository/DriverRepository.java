@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface DriverRepository extends JpaRepository<Driver, Long>, JpaSpecificationExecutor<Driver> {
     List<Driver> findAllByActiveIsTrue();
     Optional<Driver> findByIdAndActiveIsTrue(Long id);
+    Optional<Driver> findByNicNoAndActiveIsTrue(String nic);
 }

@@ -36,7 +36,7 @@ export default function DeleteModal({ text, button , func }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={()=> func()} autoFocus>
+          <Button onClick={()=> {func()}} autoFocus>
             Delete
           </Button>
         </DialogActions>
