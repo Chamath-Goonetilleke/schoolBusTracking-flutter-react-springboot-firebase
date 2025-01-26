@@ -1,21 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
-  Avatar,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControl,
   FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
+import { saveVehicle } from "../service/vehicleService";
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -61,7 +57,6 @@ export default function AddVehicleModal({ fetchAllVehicles }) {
     brand: "",
     model: "",
     seatCount: 0,
-    availableSeatCount: 0,
     route: "",
     locations: "",
     active: true,
@@ -80,8 +75,19 @@ export default function AddVehicleModal({ fetchAllVehicles }) {
   };
 
   const handleSave = async () => {
-    // Save vehicle logic goes here
-    console.log("Vehicle data saved:", vehicle);
+    let newVehicle = { ...vehicle };
+    newVehicle.availableSeatCount = vehicle.seatCount;
+
+    await saveVehicle(newVehicle)
+      .then(({ data }) => {
+        fetchAllVehicles();
+        handleClose();
+      })
+      .catch((err) => {
+        handleClose();
+        console.log(err);
+      });
+
     fetchAllVehicles();
     handleClose();
   };
@@ -111,42 +117,49 @@ export default function AddVehicleModal({ fetchAllVehicles }) {
             value={vehicle.vehicleNo}
             onChange={handleInputChange}
           />
-          <TextField
-            fullWidth
-            margin="normal"
-            name="type"
-            label="Type"
-            variant="outlined"
-            value={vehicle.type}
-            onChange={handleInputChange}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            name="color"
-            label="Color"
-            variant="outlined"
-            value={vehicle.color}
-            onChange={handleInputChange}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            name="brand"
-            label="Brand"
-            variant="outlined"
-            value={vehicle.brand}
-            onChange={handleInputChange}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            name="model"
-            label="Model"
-            variant="outlined"
-            value={vehicle.model}
-            onChange={handleInputChange}
-          />
+          <div style={{ display: "flex" }}>
+            <TextField
+              sx={{ marginRight: "1rem" }}
+              fullWidth
+              margin="normal"
+              name="type"
+              label="Type"
+              variant="outlined"
+              value={vehicle.type}
+              onChange={handleInputChange}
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              name="color"
+              label="Color"
+              variant="outlined"
+              value={vehicle.color}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div style={{ display: "flex" }}>
+            <TextField
+              fullWidth
+              sx={{ marginRight: "1rem" }}
+              margin="normal"
+              name="brand"
+              label="Brand"
+              variant="outlined"
+              value={vehicle.brand}
+              onChange={handleInputChange}
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              name="model"
+              label="Model"
+              variant="outlined"
+              value={vehicle.model}
+              onChange={handleInputChange}
+            />
+          </div>
+
           <TextField
             fullWidth
             margin="normal"
@@ -157,16 +170,7 @@ export default function AddVehicleModal({ fetchAllVehicles }) {
             value={vehicle.seatCount}
             onChange={handleInputChange}
           />
-          <TextField
-            fullWidth
-            margin="normal"
-            name="availableSeatCount"
-            label="Available Seat Count"
-            type="number"
-            variant="outlined"
-            value={vehicle.availableSeatCount}
-            onChange={handleInputChange}
-          />
+
           <TextField
             fullWidth
             margin="normal"
@@ -174,6 +178,7 @@ export default function AddVehicleModal({ fetchAllVehicles }) {
             label="Route"
             variant="outlined"
             value={vehicle.route}
+            placeholder="eg: Kesbewa - Colombo"
             onChange={handleInputChange}
           />
           <TextField
@@ -182,6 +187,7 @@ export default function AddVehicleModal({ fetchAllVehicles }) {
             name="locations"
             label="Locations"
             variant="outlined"
+            placeholder=" eg: Kesbewa - Piliyandala - Bokundara - Boralesgamuwa - Colombo"
             value={vehicle.locations}
             onChange={handleInputChange}
           />

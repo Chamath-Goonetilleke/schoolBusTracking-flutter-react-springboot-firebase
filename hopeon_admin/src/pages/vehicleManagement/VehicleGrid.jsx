@@ -2,47 +2,30 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid2";
 import VehicleCard from "../../components/VehicleCard";
+import { findAllVehicles } from "../../service/vehicleService";
 
-const vehicles = [
-  {
-    vehicleNo: "LN-1234",
-    type: "Bus",
-    color: "black",
-    brand: "Toyota",
-    model: "VSX",
-    route: "Kesbewa - Colombo",
-    imageUrl: "",
-  },
-  {
-    vehicleNo: "LN-1234",
-    type: "Bus",
-    color: "black",
-    brand: "Toyota",
-    model: "VSX",
-    route: "Kesbewa - Colombo",
-    imageUrl: "",
-  },
-  {
-    vehicleNo: "LN-1234",
-    type: "Bus",
-    color: "black",
-    brand: "Toyota",
-    model: "VSX",
-    route: "Kesbewa - Colombo",
-    imageUrl: "",
-  },
-  {
-    vehicleNo: "LN-1234",
-    type: "Bus",
-    color: "black",
-    brand: "Toyota",
-    model: "VSX",
-    route: "Kesbewa - Colombo",
-    imageUrl: "",
-  },
-];
+export default function VehicleGrid({
+  setIsVehicleSelected,
+  setSelectedVehicle,
+  setFetchAllVehicles,
+}) {
+  const [vehicles, setVehicles] = React.useState([]);
 
-export default function VehicleGrid({ setIsVehicleSelected, setSelectedVehicle }) {
+  const fetchAllVehicles = async () => {
+    await findAllVehicles()
+      .then(({ data }) => {
+        setVehicles(data.object);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  React.useEffect(() => {
+    fetchAllVehicles();
+    setFetchAllVehicles(()=>fetchAllVehicles)
+  }, [setFetchAllVehicles]);
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid
