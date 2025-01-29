@@ -18,4 +18,5 @@ public class Driver extends User{
     private Boolean active;
     private Long vehicleId;
     private String vehicleNo;
+    private String vehicleDetails;
 }

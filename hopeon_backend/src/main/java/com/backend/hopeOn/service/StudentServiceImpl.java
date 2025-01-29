@@ -27,7 +27,7 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public HOResponse<List<Student>> findAll() {
 
-        List<Student> studentList = studentRepository.findAllByActiveIsTrue().stream().map(this::StudentEntityToDomainMapper).toList();
+        List<Student> studentList = studentRepository.findAll().stream().map(this::StudentEntityToDomainMapper).toList();
 
         HOResponse<List<Student>> response = new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
@@ -122,6 +122,9 @@ public class StudentServiceImpl implements StudentService{
 
         com.backend.hopeOn.entity.Student updatedStudent = studentRepository.save(existingStudent);
 
+        vehicle.setAvailableSeatCount(vehicle.getAvailableSeatCount()-1);
+        vehicleRepository.save(vehicle);
+
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Vehicle assigned successfully");
         response.setObject(StudentEntityToDomainMapper(updatedStudent));
@@ -163,6 +166,14 @@ public class StudentServiceImpl implements StudentService{
         if (studentEntity.getVehicle() != null) {
             studentDomain.setVehicleId(studentEntity.getVehicle().getId());
             studentDomain.setVehicleNo(studentEntity.getVehicle().getVehicleNo());
+            studentDomain.setVehicleDetails(studentEntity.getVehicle().getType()+", "+studentEntity.getVehicle().getBrand()+", "+studentEntity.getVehicle().getModel());
+
+            if(studentEntity.getVehicle().getDriver() != null) {
+                studentDomain.setDriverId(studentEntity.getVehicle().getDriver().getId());
+                studentDomain.setDriverName(studentEntity.getVehicle().getDriver().getFullName());
+                studentDomain.setDriverNIC(studentEntity.getVehicle().getDriver().getNicNo());
+                studentDomain.setDriverContactNo(studentEntity.getVehicle().getDriver().getContactNo());
+            }
         }
 
         return studentDomain;

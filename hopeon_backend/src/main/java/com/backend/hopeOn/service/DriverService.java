@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface DriverService {
     HOResponse<List<Driver>> findAll();
+    HOResponse<List<Driver>> findAllUnAssigned();
     HOResponse<Driver> findById(Long id);
     HOResponse<List<Driver>> search(Driver driverSearch);
     HOResponse<Driver> assignVehicle( Long id, Long vehicleId);

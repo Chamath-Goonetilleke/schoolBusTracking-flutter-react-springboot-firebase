@@ -12,6 +12,10 @@ public interface VehicleController {
     @ResponseBody
     HOResponse<List<Vehicle>> findAll();
 
+    @GetMapping("/findAllAssignable")
+    @ResponseBody
+    HOResponse<List<Vehicle>> findAllAssignable();
+
     @GetMapping("/{id}")
     @ResponseBody
     HOResponse<Vehicle> findById(@PathVariable Long id);

@@ -27,6 +27,15 @@ public class VehicleControllerImpl implements VehicleController {
     }
 
     @Override
+    public HOResponse<List<Vehicle>> findAllAssignable() {
+        try {
+            return vehicleService.findAllAssignable();
+        } catch (Exception e) {
+            throw new HOException("Error while fetching vehicle list: " + e.getMessage());
+        }
+    }
+
+    @Override
     public HOResponse<Vehicle> findById(Long id) {
         try {
             return vehicleService.findById(id);

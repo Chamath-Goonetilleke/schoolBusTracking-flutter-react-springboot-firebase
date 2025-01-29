@@ -1,7 +1,13 @@
 import {
   Avatar,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
   FormControl,
+  FormControlLabel,
   IconButton,
   InputLabel,
   MenuItem,
@@ -10,28 +16,57 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import EditNoteIcon from '@mui/icons-material/EditNote';
-const grades = [
-  { id: 1, grade: "Grade 5", classes: ["A", "B", "C"] },
-  { id: 2, grade: "Grade 6", classes: ["A", "B", "C"] },
-  { id: 3, grade: "Grade 7", classes: ["A", "B", "C"] },
-  { id: 4, grade: "Grade 8", classes: ["A", "B", "C"] },
-];
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import { styled } from "@mui/material/styles";
+import Switch from "@mui/material/Switch";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
+const IOSSwitch = styled((props) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 42,
+  height: 26,
+  padding: 0,
+  "& .MuiSwitch-switchBase": {
+    padding: 0,
+    margin: 2,
+    transitionDuration: "300ms",
+    "&.Mui-checked": {
+      transform: "translateX(16px)",
+      color: "#fff",
+      "& + .MuiSwitch-track": {
+        backgroundColor: "#65C466",
+        opacity: 1,
+        border: 0,
+      },
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    width: 22,
+    height: 22,
+  },
+  "& .MuiSwitch-track": {
+    borderRadius: 13,
+    backgroundColor: "#E9E9EA",
+    opacity: 1,
+    transition: theme.transitions.create(["background-color"], {
+      duration: 500,
+    }),
+  },
+}));
 export default function SingleDriverPage({
   driver,
   setIsDriverSelected,
   setSelectedDriver,
 }) {
-  const [selectedGrade, setSelectedGrade] = useState(1);
-  const [selectedClasses, setSelectedClasses] = useState([]);
 
-  const onSelectGrade = (e) => {
-    setSelectedGrade(e.target.value);
-    const selectedGrade = grades.filter(g=> g.id === e.target.value)[0];
-    setSelectedClasses(selectedGrade.classes)
-  };
-
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  //setDriver({ ...driver, [name]: value });
+};
+const handleSwitchChange = (e) => {
+  //setDriver({ ...driver, active: e.target.checked });
+};
   return (
     <div style={{ margin: "2rem" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -48,9 +83,9 @@ export default function SingleDriverPage({
         <div
           style={{
             display: "flex",
-            flex: 1,
+            flex: 1.5,
             flexDirection: "column",
-           
+
             alignItems: "center",
             width: "100%",
           }}
@@ -62,96 +97,151 @@ export default function SingleDriverPage({
               style={{ width: 170, height: 170 }}
             />
           </div>
-          <div style={{display:'flex', justifyContent:'flex-end', width:'90%', }} >
-            <Button variant="contained" startIcon={<EditNoteIcon/>} >Edit</Button>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              width: "90%",
+            }}
+          >
+            <Button variant="contained" startIcon={<EditNoteIcon />}>
+              Edit
+            </Button>
           </div>
           <div style={{ width: "90%" }}>
+            <div style={{ display: "flex" }}>
+              <TextField
+                fullWidth
+                style={{ marginRight: "1rem" }}
+                margin="normal"
+                name="nicNo"
+                label="NIC Number"
+                variant="outlined"
+                value={driver.nicNo}
+                onChange={handleInputChange}
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                name="licenseNo"
+                label="License Number"
+                variant="outlined"
+                value={driver.licenseNo}
+                onChange={handleInputChange}
+              />
+            </div>
+
             <TextField
               fullWidth
               margin="normal"
-              label="Registration Number"
+              name="email"
+              type="email"
+              label="Email"
               variant="outlined"
+              value={driver.email}
+              onChange={handleInputChange}
             />
-            <TextField fullWidth label="Full Name" variant="outlined" />
-            <div style={{ display: "flex" }}>
-              <FormControl sx={{ marginTop: 2, marginRight: 1, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Grade</InputLabel>
-                <Select
-                  labelId="demo-multiple-name-label"
-                  label="Grade"
-                  value={selectedGrade}
-                  onChange={onSelectGrade}
-                >
-                  {grades.map((grade) => (
-                    <MenuItem key={grade.id} value={grade.id}>
-                      {grade.grade}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl sx={{ marginTop: 2, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Class</InputLabel>
-                <Select labelId="demo-multiple-name-label" label="class">
-                  {selectedClasses.map((cls) => (
-                    <MenuItem key={cls} value={cls}>
-                      {cls}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
             <TextField
-              margin="dense"
               fullWidth
-              label="Parent Name"
+              margin="normal"
+              name="fullName"
+              label="Full Name"
               variant="outlined"
+              value={driver.fullName}
+              onChange={handleInputChange}
             />
+
             <div style={{ display: "flex" }}>
               <TextField
-                margin="dense"
                 fullWidth
+                style={{ marginRight: "1rem" }}
+                margin="normal"
+                name="contactNo"
                 label="Contact Number"
                 variant="outlined"
-                sx={{ marginRight: 1 }}
+                value={driver.contactNo}
+                onChange={handleInputChange}
               />
-              <FormControl sx={{ marginTop: 1, marginRight: 1, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Gender</InputLabel>
-                <Select labelId="demo-multiple-name-label" label="Gender">
-                  <MenuItem key="Male" value="Male">
-                    Male
-                  </MenuItem>
-                  <MenuItem key="Female" value="Female">
-                    Female
-                  </MenuItem>
+              <FormControl sx={{ marginTop: 2, marginRight: 1, width: 300 }}>
+                <InputLabel id="gender-label">Gender</InputLabel>
+                <Select
+                  labelId="gender-label"
+                  label="Gender"
+                  name="gender"
+                  value={driver.gender}
+                  onChange={handleInputChange}
+                >
+                  <MenuItem value="Male">Male</MenuItem>
+                  <MenuItem value="Female">Female</MenuItem>
                 </Select>
               </FormControl>
-              <FormControl sx={{ marginTop: 1, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Age</InputLabel>
-                <Select labelId="demo-multiple-name-label" label="Age">
-                  {Array.from(Array(18)).map((_, index) => (
-                    <MenuItem key={index} value={index + 1}>
-                      {index + 1}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                margin="normal"
+                fullWidth
+                name="age"
+                label="Age"
+                variant="outlined"
+                value={driver.age}
+                onChange={handleInputChange}
+              />
             </div>
             <TextField
-              margin="dense"
               fullWidth
+              margin="normal"
+              name="experience"
+              label="Experience"
+              variant="outlined"
+              value={driver.experience}
+              onChange={handleInputChange}
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              name="location"
               label="Location"
               variant="outlined"
+              value={driver.location}
+              onChange={handleInputChange}
             />
           </div>
         </div>
         <div
           style={{
             display: "flex",
-            flex: 2,
+            flex: 1,
             width: "100%",
-           
+            marginLeft: "1rem",
+            flexDirection: "column",
           }}
-        ></div>
+        >
+          <FormControlLabel
+            control={
+              <IOSSwitch
+                sx={{ m: 1 }}
+                checked={driver.active}
+                onChange={handleSwitchChange}
+              />
+            }
+            label="Active"
+          />
+          <div style={{ marginBottom: "2rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <h3>Vehicle Details</h3>
+              <Button endIcon={<OpenInNewIcon />}>view details</Button>
+            </div>
+            <div style={{ marginBottom: "1rem" }}>
+              Vehicle No: {driver.vehicleNo}{" "}
+            </div>
+            <div>Type, Brand, Model: {driver.vehicleDetails}</div>
+          </div>
+          <Divider style={{ marginBottom: "1rem" }} />
+
+          <div>
+            <Button sx={{ width: "100%" }} variant="outlined">
+              Reset Password
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

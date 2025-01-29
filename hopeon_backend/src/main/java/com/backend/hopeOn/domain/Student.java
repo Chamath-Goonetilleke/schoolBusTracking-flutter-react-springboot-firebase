@@ -19,4 +19,9 @@ public class Student extends User{
     private Boolean active;
     private Long vehicleId;
     private String vehicleNo;
+    private String vehicleDetails;
+    private Long driverId;
+    private String driverName;
+    private String driverContactNo;
+    private String driverNIC;
 }

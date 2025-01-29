@@ -21,5 +21,7 @@ public class Vehicle extends AbstractModel{
     private Boolean active;
     private Long driverId;
     private String driverName;
+    private String driverContactNo;
+    private String driverNIC;
     private List<Student> studentList;
 }

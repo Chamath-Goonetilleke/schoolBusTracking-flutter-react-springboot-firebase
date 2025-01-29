@@ -1,37 +1,65 @@
 import {
   Avatar,
   Button,
-  FormControl,
   IconButton,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
+  FormControlLabel,
 } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import EditNoteIcon from '@mui/icons-material/EditNote';
-const grades = [
-  { id: 1, grade: "Grade 5", classes: ["A", "B", "C"] },
-  { id: 2, grade: "Grade 6", classes: ["A", "B", "C"] },
-  { id: 3, grade: "Grade 7", classes: ["A", "B", "C"] },
-  { id: 4, grade: "Grade 8", classes: ["A", "B", "C"] },
-];
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import { styled } from "@mui/material/styles";
+import Switch from "@mui/material/Switch";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import AddIcon from "@mui/icons-material/Add";
+import AssignDriverListModel from "../../components/AssignDriverListModel";
 
+const IOSSwitch = styled((props) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 42,
+  height: 26,
+  padding: 0,
+  "& .MuiSwitch-switchBase": {
+    padding: 0,
+    margin: 2,
+    transitionDuration: "300ms",
+    "&.Mui-checked": {
+      transform: "translateX(16px)",
+      color: "#fff",
+      "& + .MuiSwitch-track": {
+        backgroundColor: "#65C466",
+        opacity: 1,
+        border: 0,
+      },
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    width: 22,
+    height: 22,
+  },
+  "& .MuiSwitch-track": {
+    borderRadius: 13,
+    backgroundColor: "#E9E9EA",
+    opacity: 1,
+    transition: theme.transitions.create(["background-color"], {
+      duration: 500,
+    }),
+  },
+}));
 export default function SingleVehiclePage({
   vehicle,
   setIsVehicleSelected,
   setSelectedVehicle,
 }) {
-  const [selectedGrade, setSelectedGrade] = useState(1);
-  const [selectedClasses, setSelectedClasses] = useState([]);
-
-  const onSelectGrade = (e) => {
-    setSelectedGrade(e.target.value);
-    const selectedGrade = grades.filter(g=> g.id === e.target.value)[0];
-    setSelectedClasses(selectedGrade.classes)
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    //setVehicle({ ...vehicle, [name]: value });
   };
 
+  const handleSwitchChange = (e) => {
+    //setVehicle({ ...vehicle, active: e.target.checked });
+  };
   return (
     <div style={{ margin: "2rem" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -48,9 +76,9 @@ export default function SingleVehiclePage({
         <div
           style={{
             display: "flex",
-            flex: 1,
+            flex: 1.5,
             flexDirection: "column",
-           
+
             alignItems: "center",
             width: "100%",
           }}
@@ -62,96 +90,166 @@ export default function SingleVehiclePage({
               style={{ width: 170, height: 170 }}
             />
           </div>
-          <div style={{display:'flex', justifyContent:'flex-end', width:'90%', }} >
-            <Button variant="contained" startIcon={<EditNoteIcon/>} >Edit</Button>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              width: "90%",
+            }}
+          >
+            <Button variant="contained" startIcon={<EditNoteIcon />}>
+              Edit
+            </Button>
           </div>
           <div style={{ width: "90%" }}>
             <TextField
               fullWidth
               margin="normal"
-              label="Registration Number"
+              name="vehicleNo"
+              label="Vehicle Number"
               variant="outlined"
-            />
-            <TextField fullWidth label="Full Name" variant="outlined" />
-            <div style={{ display: "flex" }}>
-              <FormControl sx={{ marginTop: 2, marginRight: 1, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Grade</InputLabel>
-                <Select
-                  labelId="demo-multiple-name-label"
-                  label="Grade"
-                  value={selectedGrade}
-                  onChange={onSelectGrade}
-                >
-                  {grades.map((grade) => (
-                    <MenuItem key={grade.id} value={grade.id}>
-                      {grade.grade}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl sx={{ marginTop: 2, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Class</InputLabel>
-                <Select labelId="demo-multiple-name-label" label="class">
-                  {selectedClasses.map((cls) => (
-                    <MenuItem key={cls} value={cls}>
-                      {cls}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
-            <TextField
-              margin="dense"
-              fullWidth
-              label="Parent Name"
-              variant="outlined"
+              value={vehicle.vehicleNo}
+              onChange={handleInputChange}
             />
             <div style={{ display: "flex" }}>
               <TextField
-                margin="dense"
+                sx={{ marginRight: "1rem" }}
                 fullWidth
-                label="Contact Number"
+                margin="normal"
+                name="type"
+                label="Type"
                 variant="outlined"
-                sx={{ marginRight: 1 }}
+                value={vehicle.type}
+                onChange={handleInputChange}
               />
-              <FormControl sx={{ marginTop: 1, marginRight: 1, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Gender</InputLabel>
-                <Select labelId="demo-multiple-name-label" label="Gender">
-                  <MenuItem key="Male" value="Male">
-                    Male
-                  </MenuItem>
-                  <MenuItem key="Female" value="Female">
-                    Female
-                  </MenuItem>
-                </Select>
-              </FormControl>
-              <FormControl sx={{ marginTop: 1, width: 300 }}>
-                <InputLabel id="demo-multiple-name-label">Age</InputLabel>
-                <Select labelId="demo-multiple-name-label" label="Age">
-                  {Array.from(Array(18)).map((_, index) => (
-                    <MenuItem key={index} value={index + 1}>
-                      {index + 1}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <TextField
+                fullWidth
+                margin="normal"
+                name="color"
+                label="Color"
+                variant="outlined"
+                value={vehicle.color}
+                onChange={handleInputChange}
+              />
             </div>
+            <div style={{ display: "flex" }}>
+              <TextField
+                fullWidth
+                sx={{ marginRight: "1rem" }}
+                margin="normal"
+                name="brand"
+                label="Brand"
+                variant="outlined"
+                value={vehicle.brand}
+                onChange={handleInputChange}
+              />
+              <TextField
+                fullWidth
+                margin="normal"
+                name="model"
+                label="Model"
+                variant="outlined"
+                value={vehicle.model}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div style={{ display: "flex" }}>
+              <TextField
+                sx={{ marginRight: "1rem", flex: 1 }}
+                fullWidth
+                margin="normal"
+                name="seatCount"
+                label="Seat Count"
+                type="number"
+                variant="outlined"
+                value={vehicle.seatCount}
+                onChange={handleInputChange}
+              />
+
+              <TextField
+                sx={{ flex: 3 }}
+                fullWidth
+                margin="normal"
+                name="route"
+                label="Route"
+                variant="outlined"
+                value={vehicle.route}
+                placeholder="eg: Kesbewa - Colombo"
+                onChange={handleInputChange}
+              />
+            </div>
+
             <TextField
-              margin="dense"
               fullWidth
-              label="Location"
+              margin="normal"
+              name="locations"
+              label="Locations"
               variant="outlined"
+              placeholder=" eg: Kesbewa - Piliyandala - Bokundara - Boralesgamuwa - Colombo"
+              value={vehicle.locations}
+              onChange={handleInputChange}
             />
           </div>
         </div>
         <div
           style={{
             display: "flex",
-            flex: 2,
+            flex: 1,
             width: "100%",
-           
+            flexDirection: "column",
           }}
-        ></div>
+        >
+          <FormControlLabel
+            control={
+              <IOSSwitch
+                sx={{ m: 1 }}
+                checked={vehicle.active}
+                onChange={handleSwitchChange}
+              />
+            }
+            label="Active"
+          />
+          <div style={{ marginBottom: "1rem", marginTop: "1rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <h3>Driver Details</h3>
+              {vehicle.driverId !== null && (
+                <Button endIcon={<OpenInNewIcon />}>view details</Button>
+              )}
+            </div>
+            {vehicle.driverId === null ? (
+              <AssignDriverListModel vehicleId={vehicle.id} />
+            ) : (
+              <div>
+                <div style={{ marginBottom: "1rem" }}>
+                  Driver NIC No: {vehicle.driverNIC}{" "}
+                </div>
+                <div style={{ marginBottom: "1rem" }}>
+                  Driver Name: {vehicle.driverName}{" "}
+                </div>
+                <div>Contact Number:{vehicle.driverContactNo} </div>
+              </div>
+            )}
+          </div>
+          <div style={{ marginBottom: "3rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <h3>Other Details</h3>
+            </div>
+            <div style={{ marginBottom: "1rem" }}>
+              Student Count: {vehicle.seatCount - vehicle.availableSeatCount}
+            </div>
+            <div>Available Seat Count: {vehicle.availableSeatCount} </div>
+          </div>
+
+          <div style={{ marginBottom: "2rem" }}>
+            <Button
+              sx={{ width: "100%" }}
+              variant="outlined"
+              endIcon={<OpenInNewIcon />}
+            >
+              view Student list
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

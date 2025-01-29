@@ -1,16 +1,57 @@
 import {
   Avatar,
   Button,
+  Divider,
   FormControl,
   IconButton,
   InputLabel,
   MenuItem,
   Select,
+  FormControlLabel,
   TextField,
 } from "@mui/material";
 import React, { useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditNoteIcon from '@mui/icons-material/EditNote';
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { styled } from "@mui/material/styles";
+import Switch from "@mui/material/Switch";
+import AssignVehicleModel from "../../components/AssignVehicleModel";
+
+const IOSSwitch = styled((props) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 42,
+  height: 26,
+  padding: 0,
+  "& .MuiSwitch-switchBase": {
+    padding: 0,
+    margin: 2,
+    transitionDuration: "300ms",
+    "&.Mui-checked": {
+      transform: "translateX(16px)",
+      color: "#fff",
+      "& + .MuiSwitch-track": {
+        backgroundColor: "#65C466",
+        opacity: 1,
+        border: 0,
+      },
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    width: 22,
+    height: 22,
+  },
+  "& .MuiSwitch-track": {
+    borderRadius: 13,
+    backgroundColor: "#E9E9EA",
+    opacity: 1,
+    transition: theme.transitions.create(["background-color"], {
+      duration: 500,
+    }),
+  },
+}));
+
 const grades = [
   { id: 1, grade: "Grade 5", classes: ["A", "B", "C"] },
   { id: 2, grade: "Grade 6", classes: ["A", "B", "C"] },
@@ -30,6 +71,9 @@ export default function SingleStudentPage({
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setStudent({ ...student, [name]: value });
+  };
+  const handleSwitchChange = (e) => {
+    //setDriver({ ...driver, active: e.target.checked });
   };
   const handleGradeChange = (e) => {
     const selectedGradeId = e.target.value;
@@ -224,8 +268,61 @@ export default function SingleStudentPage({
             display: "flex",
             flex: 2,
             width: "100%",
+            flexDirection: "column",
           }}
-        ></div>
+        >
+          <FormControlLabel
+            control={
+              <IOSSwitch
+                sx={{ m: 1 }}
+                checked={student.active}
+                onChange={handleSwitchChange}
+              />
+            }
+            label="Active"
+          />
+
+          <div style={{ marginBottom: "2rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <h3>Vehicle Details</h3>
+              <Button endIcon={<OpenInNewIcon />}>view details</Button>
+            </div>
+            {student.vehicleId === null ? (
+              <AssignVehicleModel studentId={student.id} />
+            ) : (
+              <div>
+                <div style={{ marginBottom: "1rem" }}>
+                  Vehicle No: {student.vehicleNo}
+                </div>
+                <div>Type, Brand, Model: {student.vehicleDetails}</div>
+              </div>
+            )}
+          </div>
+          <Divider style={{ marginBottom: "1rem" }} />
+          <div style={{ marginBottom: "3rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <h3>Driver Details</h3>
+              <Button endIcon={<OpenInNewIcon />}>view details</Button>
+            </div>
+            {student.vehicleId === null && student.driverId === null ? (
+              <div>
+                <i>No Driver Details</i>
+              </div>
+            ) : (
+              <div>
+                <div style={{ marginBottom: "1rem" }}>
+                  Driver Name: {student.driverName}
+                </div>
+                <div>Contact Number: {student.vehicleNo}</div>
+              </div>
+            )}
+          </div>
+          <div>
+            <Button sx={{ width: "100%" }} variant="outlined">
+              Reset Password
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

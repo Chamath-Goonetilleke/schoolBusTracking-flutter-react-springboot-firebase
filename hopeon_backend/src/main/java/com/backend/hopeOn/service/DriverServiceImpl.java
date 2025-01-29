@@ -26,7 +26,19 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public HOResponse<List<Driver>> findAll() {
-        List<Driver> driverList = driverRepository.findAllByActiveIsTrue().stream().map(this::entityToDomainMapper).toList();
+        List<Driver> driverList = driverRepository.findAll().stream().map(this::entityToDomainMapper).toList();
+
+        HOResponse<List<Driver>> response = new HOResponse<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Driver list fetched successfully.");
+        response.setObject(driverList);
+
+        return response;
+    }
+
+    @Override
+    public HOResponse<List<Driver>> findAllUnAssigned() {
+        List<Driver> driverList = driverRepository.findAllByActiveIsTrue().stream().filter(driver -> driver.getVehicle() == null).map(this::entityToDomainMapper).toList();
 
         HOResponse<List<Driver>> response = new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
@@ -173,6 +185,7 @@ public class DriverServiceImpl implements DriverService {
         if (driverEntity.getVehicle() != null) {
             driverDomain.setVehicleId(driverEntity.getVehicle().getId());
             driverDomain.setVehicleNo(driverEntity.getVehicle().getVehicleNo());
+            driverDomain.setVehicleDetails(driverEntity.getVehicle().getType()+", "+driverEntity.getVehicle().getBrand()+", "+driverEntity.getVehicle().getModel());
         }
         return driverDomain;
     }

@@ -22,7 +22,22 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public HOResponse<List<Vehicle>> findAll() {
-        List<Vehicle> vehicleList = vehicleRepository.findAllByActiveIsTrue().stream().map(this::EntityToDomainMapper).toList();
+        List<Vehicle> vehicleList = vehicleRepository.findAll().stream().map(this::EntityToDomainMapper).toList();
+
+        HOResponse<List<Vehicle>> response = new HOResponse<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Vehicle list fetched successfully");
+        response.setObject(vehicleList);
+
+        return response;
+    }
+
+    @Override
+    public HOResponse<List<Vehicle>> findAllAssignable() {
+        List<Vehicle> vehicleList = vehicleRepository.findAllByActiveIsTrue()
+                .stream()
+                .filter(vehicle -> (vehicle.getSeatCount() - vehicle.getAvailableSeatCount()) < vehicle.getSeatCount())
+                .map(this::EntityToDomainMapper).toList();
 
         HOResponse<List<Vehicle>> response = new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
@@ -110,9 +125,11 @@ public class VehicleServiceImpl implements VehicleService {
         if (vehicleEntity.getDriver() != null) {
             vehicleDomain.setDriverId(vehicleEntity.getDriver().getId());
             vehicleDomain.setDriverName(vehicleEntity.getDriver().getFullName());
+            vehicleDomain.setDriverContactNo(vehicleEntity.getDriver().getContactNo());
+            vehicleDomain.setDriverNIC(vehicleEntity.getDriver().getNicNo());
         }
 
-        if(!vehicleEntity.getStudentList().isEmpty()){
+        if (!vehicleEntity.getStudentList().isEmpty()) {
             List<Student> studentList = new ArrayList<>();
             vehicleEntity.getStudentList().forEach(student -> studentList.add(studentService.StudentEntityToDomainMapper(student)));
 
@@ -129,7 +146,7 @@ public class VehicleServiceImpl implements VehicleService {
 
         com.backend.hopeOn.entity.Vehicle vehicleEntity = new com.backend.hopeOn.entity.Vehicle();
 
-        if(vehicleDomain.getId() != null){
+        if (vehicleDomain.getId() != null) {
             vehicleEntity.setId(vehicleDomain.getId());
         }
         vehicleEntity.setVehicleNo(vehicleDomain.getVehicleNo());

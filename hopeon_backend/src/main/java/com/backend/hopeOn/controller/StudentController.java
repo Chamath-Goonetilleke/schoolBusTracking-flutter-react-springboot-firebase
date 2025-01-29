@@ -13,7 +13,7 @@ public interface StudentController {
     @ResponseBody
     HOResponse<List<Student>> findAll();
 
-    @PostMapping()
+    @PostMapping
     @ResponseBody
     HOResponse<Student> save(@RequestBody Student student);
 

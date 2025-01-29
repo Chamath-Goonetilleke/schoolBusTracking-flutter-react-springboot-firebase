@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+    Avatar,
   Button,
   Dialog,
   DialogActions,
@@ -105,9 +106,24 @@ export default function AddVehicleModal({ fetchAllVehicles }) {
         open={open}
         onClose={handleClose}
         aria-labelledby="responsive-dialog-title"
+        fullWidth={true}
       >
         <DialogTitle>{"Add New Vehicle"}</DialogTitle>
         <DialogContent>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <Avatar
+              alt="Driver Avatar"
+              src="/static/images/avatar/1.jpg"
+              style={{ width: 170, height: 170 }}
+            />
+          </div>
           <TextField
             fullWidth
             margin="normal"
@@ -159,28 +175,32 @@ export default function AddVehicleModal({ fetchAllVehicles }) {
               onChange={handleInputChange}
             />
           </div>
+          <div style={{ display: "flex" }}>
+            <TextField
+              sx={{ marginRight: "1rem", flex: 1 }}
+              fullWidth
+              margin="normal"
+              name="seatCount"
+              label="Seat Count"
+              type="number"
+              variant="outlined"
+              value={vehicle.seatCount}
+              onChange={handleInputChange}
+            />
 
-          <TextField
-            fullWidth
-            margin="normal"
-            name="seatCount"
-            label="Seat Count"
-            type="number"
-            variant="outlined"
-            value={vehicle.seatCount}
-            onChange={handleInputChange}
-          />
+            <TextField
+              sx={{ flex: 3 }}
+              fullWidth
+              margin="normal"
+              name="route"
+              label="Route"
+              variant="outlined"
+              value={vehicle.route}
+              placeholder="eg: Kesbewa - Colombo"
+              onChange={handleInputChange}
+            />
+          </div>
 
-          <TextField
-            fullWidth
-            margin="normal"
-            name="route"
-            label="Route"
-            variant="outlined"
-            value={vehicle.route}
-            placeholder="eg: Kesbewa - Colombo"
-            onChange={handleInputChange}
-          />
           <TextField
             fullWidth
             margin="normal"

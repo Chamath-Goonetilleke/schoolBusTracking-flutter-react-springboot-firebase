@@ -126,15 +126,28 @@ export default function AddDriverModal({ fetchAllDrivers }) {
               style={{ width: 170, height: 170 }}
             />
           </div>
-          <TextField
-            fullWidth
-            margin="normal"
-            name="nicNo"
-            label="NIC Number"
-            variant="outlined"
-            value={driver.nicNo}
-            onChange={handleInputChange}
-          />
+          <div style={{ display: "flex" }}>
+            <TextField
+              fullWidth
+              style={{ marginRight: "1rem" }}
+              margin="normal"
+              name="nicNo"
+              label="NIC Number"
+              variant="outlined"
+              value={driver.nicNo}
+              onChange={handleInputChange}
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              name="licenseNo"
+              label="License Number"
+              variant="outlined"
+              value={driver.licenseNo}
+              onChange={handleInputChange}
+            />
+          </div>
+
           <TextField
             fullWidth
             margin="normal"
@@ -154,25 +167,18 @@ export default function AddDriverModal({ fetchAllDrivers }) {
             value={driver.fullName}
             onChange={handleInputChange}
           />
-          <TextField
-            fullWidth
-            margin="normal"
-            name="licenseNo"
-            label="License Number"
-            variant="outlined"
-            value={driver.licenseNo}
-            onChange={handleInputChange}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            name="contactNo"
-            label="Contact Number"
-            variant="outlined"
-            value={driver.contactNo}
-            onChange={handleInputChange}
-          />
+
           <div style={{ display: "flex" }}>
+            <TextField
+              fullWidth
+              style={{ marginRight: "1rem" }}
+              margin="normal"
+              name="contactNo"
+              label="Contact Number"
+              variant="outlined"
+              value={driver.contactNo}
+              onChange={handleInputChange}
+            />
             <FormControl sx={{ marginTop: 2, marginRight: 1, width: 300 }}>
               <InputLabel id="gender-label">Gender</InputLabel>
               <Select

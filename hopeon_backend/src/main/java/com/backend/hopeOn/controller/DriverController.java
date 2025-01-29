@@ -12,6 +12,10 @@ public interface DriverController {
     @ResponseBody
     HOResponse<List<Driver>> findAll();
 
+    @GetMapping("/findAllUnAssigned")
+    @ResponseBody
+    HOResponse<List<Driver>> findAllUnAssigned();
+
     @GetMapping("/{id}")
     @ResponseBody
     HOResponse<Driver> findById(@PathVariable Long id);

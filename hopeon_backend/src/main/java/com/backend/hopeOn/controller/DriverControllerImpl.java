@@ -28,6 +28,15 @@ public class DriverControllerImpl implements DriverController {
     }
 
     @Override
+    public HOResponse<List<Driver>> findAllUnAssigned() {
+        try {
+            return driverService.findAllUnAssigned();
+        } catch (Exception e) {
+            throw new HOException("Error while fetching driver list: " + e.getMessage());
+        }
+    }
+
+    @Override
     public HOResponse<Driver> findById(Long id) {
         try {
             return driverService.findById(id);

@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface VehicleService {
     HOResponse<List<Vehicle>> findAll();
+    HOResponse<List<Vehicle>> findAllAssignable();
     HOResponse<Vehicle> findById(Long id);
     HOResponse<Vehicle> save(Vehicle vehicle);
     HOResponse<Vehicle> update(Vehicle vehicle);
