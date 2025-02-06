@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hopeon_app/screens/common_screens/NeedHelpScreen.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverAttendanceScreen.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverBottomNavBar.dart';
 import 'package:hopeon_app/screens/parent_screens/AttendanceMarkScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/DriverInfoScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentAlertScreen.dart';
@@ -7,14 +9,14 @@ import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentTrackMyBusScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/StudentInfoScreen.dart';
 
-class ParentDashboardScreen extends StatefulWidget {
-  const ParentDashboardScreen({Key? key}) : super(key: key);
+class DriverDashboardScreen extends StatefulWidget {
+  const DriverDashboardScreen({Key? key}) : super(key: key);
 
   @override
-  _ParentDashboardScreenState createState() => _ParentDashboardScreenState();
+  _DriverDashboardScreenState createState() => _DriverDashboardScreenState();
 }
 
-class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
+class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +41,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: AssetImage("assets/images/profile-parent.png"),
+                  backgroundImage: AssetImage("assets/images/profile-driver.png"),
                 ),
                 SizedBox(width: 10),
                 Column(
@@ -50,7 +52,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                     Text(
-                      "Dinelka Perera",
+                      "Anil Karunathilaka",
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 22,
@@ -76,7 +78,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AttendanceMarkScreen()),
+                        builder: (context) => DriverAttendanceScreen()),
                   );
                 }),
                 _buildFeatureIcon(Icons.directions_bus, "Track My Bus", onTap: () {
@@ -86,7 +88,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                         builder: (context) => ParentTrackMyBusScreen()),
                   );
                 }),
-                _buildFeatureIcon(Icons.notifications, "Alert", badgeCount: 3, onTap: () {
+                _buildFeatureIcon(Icons.emergency, "Emergency", onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -119,7 +121,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: ParentBottomNavBar(selectedScreen: 0),
+      bottomNavigationBar: DriverBottomNavBar(selectedScreen: 0),
     );
   }
 

@@ -3,7 +3,7 @@ import 'package:hopeon_app/screens/driver_screens/DriverLoginScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentLoginScreen.dart';
 
 class GetStartScreen extends StatefulWidget {
-  const GetStartScreen({Key? key}) : super(key: key);
+  const GetStartScreen({super.key});
 
   @override
   _GetStartScreenState createState() => _GetStartScreenState();
@@ -21,9 +21,11 @@ class _GetStartScreenState extends State<GetStartScreen> {
           children: [
             Image.asset('assets/images/logo.png'),
             Column(
+
               children: [
                 GradientButton(
                     text: "Parent Login",
+
                     onPressed: () => {
                           Navigator.pushReplacement(
                             context,
@@ -64,8 +66,9 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
+    return MaterialButton(
+      onPressed: onPressed,
+      minWidth: double.infinity,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
         decoration: BoxDecoration(

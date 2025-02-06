@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverChatScreen.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverDashboardScreen.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverProfileScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentChatScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentDashboardScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentProfileScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentTrackMyBusScreen.dart';
 
-class ParentBottomNavBar extends StatefulWidget {
+class DriverBottomNavBar extends StatefulWidget {
   final int selectedScreen;
-  const ParentBottomNavBar({super.key, required this.selectedScreen});
+  const DriverBottomNavBar({super.key, required this.selectedScreen});
   @override
-  _ParentBottomNavBarState createState() => _ParentBottomNavBarState();
+  _DriverBottomNavBarState createState() => _DriverBottomNavBarState();
 }
 
-class _ParentBottomNavBarState extends State<ParentBottomNavBar> {
+class _DriverBottomNavBarState extends State<DriverBottomNavBar> {
   late int _selectedIndex;
 
   void _onItemTapped(int index) {
@@ -19,7 +22,7 @@ class _ParentBottomNavBarState extends State<ParentBottomNavBar> {
       Navigator.push(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => ParentDashboardScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => DriverDashboardScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var fadeAnimation = Tween(begin: 1.0, end: 1.0).animate(animation);
             return FadeTransition(opacity: fadeAnimation, child: child);
@@ -49,7 +52,7 @@ class _ParentBottomNavBarState extends State<ParentBottomNavBar> {
       Navigator.push(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => ParentChatScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => DriverChatScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var fadeAnimation = Tween(begin: 1.0, end: 1.0).animate(animation);
             return FadeTransition(opacity: fadeAnimation, child: child);
@@ -64,7 +67,7 @@ class _ParentBottomNavBarState extends State<ParentBottomNavBar> {
       Navigator.push(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => ParentProfileScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => DriverProfileScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var fadeAnimation = Tween(begin: 1.0, end: 1.0).animate(animation);
             return FadeTransition(opacity: fadeAnimation, child: child);

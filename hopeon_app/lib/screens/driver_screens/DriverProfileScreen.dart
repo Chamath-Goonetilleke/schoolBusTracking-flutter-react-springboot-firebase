@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverBottomNavBar.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
 
-class ParentProfileScreen extends StatelessWidget {
-  const ParentProfileScreen({Key? key}) : super(key: key);
+class DriverProfileScreen extends StatelessWidget {
+  const DriverProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class ParentProfileScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: ParentBottomNavBar(selectedScreen: 3),
+      bottomNavigationBar: DriverBottomNavBar(selectedScreen: 3),
     );
   }
 
