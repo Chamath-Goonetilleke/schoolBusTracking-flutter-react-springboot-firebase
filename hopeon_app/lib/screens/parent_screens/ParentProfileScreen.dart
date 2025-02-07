@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/screens/parent_screens/EditStudentScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
 
 class ParentProfileScreen extends StatelessWidget {
@@ -29,9 +30,15 @@ class ParentProfileScreen extends StatelessWidget {
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 80),
             // Buttons
-            _buildButton("Edit Student details"),
-            _buildButton("Reset Password"),
-            _buildButton("Log Out"),
+            _buildButton("Edit Student details", (){
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EditStudentScreen()),
+              );
+            }),
+            _buildButton("Reset Password", (){}),
+            _buildButton("Log Out", (){}),
           ],
         ),
       ),
@@ -39,13 +46,13 @@ class ParentProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildButton(String text) {
+  Widget _buildButton(String text, onPressed) {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: MaterialButton(
         padding: EdgeInsets.all(10),
         color: const Color.fromRGBO(37, 100, 255, 1.0),
-        onPressed: () {},
+        onPressed: onPressed,
         minWidth: 300,
         child: Text(text,
             style: const TextStyle(fontSize: 16, color: Colors.white)),

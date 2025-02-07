@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hopeon_app/screens/common_screens/NeedHelpScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverAttendanceScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverBottomNavBar.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverTripTrackingScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/AttendanceMarkScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/DriverInfoScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentAlertScreen.dart';
@@ -85,7 +86,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ParentTrackMyBusScreen()),
+                        builder: (context) => DriverTripTrackingScreen()),
                   );
                 }),
                 _buildFeatureIcon(Icons.emergency, "Emergency", onTap: () {

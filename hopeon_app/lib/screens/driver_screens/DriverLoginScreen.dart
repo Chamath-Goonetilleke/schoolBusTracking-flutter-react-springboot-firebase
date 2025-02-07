@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/screens/common_screens/ForgotPasswordScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverDashboardScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentDashboardScreen.dart';
 
@@ -98,8 +99,13 @@ class _DriverLoginScreenState extends State<DriverLoginScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            GestureDetector( child: const Text("Forgot Password"), onTap: () {
-
+                            GestureDetector( child: const Text("Forgot Password", style: TextStyle(color: Colors.blue),), onTap: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                    const ForgotPasswordScreen()),
+                              );
                             },),
                           ],
                         ),
