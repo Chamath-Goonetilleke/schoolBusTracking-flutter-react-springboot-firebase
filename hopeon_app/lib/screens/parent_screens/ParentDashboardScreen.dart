@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hopeon_app/screens/common_screens/NeedHelpScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/AttendanceMarkScreen.dart';
-import 'package:hopeon_app/screens/parent_screens/DriverInfoScreen.dart';
+import 'package:hopeon_app/screens/common_screens/DriverInfoScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentAlertScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentTrackMyBusScreen.dart';
-import 'package:hopeon_app/screens/parent_screens/StudentInfoScreen.dart';
+import 'package:hopeon_app/screens/common_screens/StudentInfoScreen.dart';
+import 'package:hopeon_app/services/parent_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ParentDashboardScreen extends StatefulWidget {
   const ParentDashboardScreen({Key? key}) : super(key: key);
@@ -15,10 +17,47 @@ class ParentDashboardScreen extends StatefulWidget {
 }
 
 class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
+  late Map<String, String?> user;
+  final ParentService _parentService = ParentService();
+  late Map<String, dynamic>? student;
+  bool _isLoading = false;
+
+  Future<void> getUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic>? fetchUser =
+    await _parentService.getStudent(prefs.getString("user_id")!);
+    if (fetchUser != null) {
+      setState(() {
+        student = fetchUser;
+      });
+    }
+    setState(() {
+      user={
+        "id": prefs.getString("user_id"),
+        "email": prefs.getString("user_email"),
+        "type": prefs.getString("user_type"),
+        "fullName": prefs.getString("full_name"),
+      };
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    getUser();
+    super.initState();
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: _isLoading ? const Center(
+        child: CircularProgressIndicator(color: Colors.blue),
+      ):Column(
         children: [
           // Top Section with Gradient Background
           Container(
@@ -35,7 +74,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                 bottomRight: Radius.circular(30),
               ),
             ),
-            child: const Row(
+            child: Row(
               children: [
                 CircleAvatar(
                   radius: 40,
@@ -50,7 +89,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                     Text(
-                      "Dinelka Perera",
+                      user['fullName']!,
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 22,
@@ -76,7 +115,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => AttendanceMarkScreen()),
+                        builder: (context) => AttendanceMarkScreen(id: user['id']!,)),
                   );
                 }),
                 _buildFeatureIcon(Icons.directions_bus, "Track My Bus", onTap: () {
@@ -90,21 +129,21 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ParentAlertScreen()),
+                        builder: (context) => ParentAlertScreen(driverId: student!["driverId"].toString(),)),
                   );
                 }),
                 _buildFeatureIcon(Icons.perm_identity, "Driver Info", onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => DriverInfoScreen()),
+                        builder: (context) => DriverInfoScreen(id: student!["driverId"].toString(),)),
                   );
                 }),
                 _buildFeatureIcon(Icons.person, "Student Info", onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => StudentInfoScreen()),
+                        builder: (context) => StudentInfoScreen(id: user['id']!,)),
                   );
                 }),
                 _buildFeatureIcon(Icons.headset_mic, "Need Help", onTap: () {
@@ -119,7 +158,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: ParentBottomNavBar(selectedScreen: 0),
+      bottomNavigationBar: const ParentBottomNavBar(selectedScreen: 0),
     );
   }
 

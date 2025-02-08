@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/services/auth_service.dart';
+import 'package:hopeon_app/services/parent_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 class EditStudentScreen extends StatefulWidget {
+  final String id;
+
+  const EditStudentScreen({super.key, required this.id});
   @override
   _EditStudentScreenState createState() => _EditStudentScreenState();
 }
@@ -14,6 +19,8 @@ class _EditStudentScreenState extends State<EditStudentScreen> {
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   File? _image;
+  final ParentService _parentService = ParentService();
+  late Map<String, dynamic> user;
 
   @override
   void initState() {
@@ -21,15 +28,21 @@ class _EditStudentScreenState extends State<EditStudentScreen> {
     _loadStudentData();
   }
 
-  void _loadStudentData() {
-    // Simulating fetching user data
-    setState(() {
-      _parentNameController.text = "Sunil Jayathilaka";
-      _contactNumberController.text = "0744444666";
-      _gradeController.text = "5E";
-      _ageController.text = "10 Years";
-      _locationController.text = "Kesbewa Junction";
-    });
+  void _loadStudentData() async{
+
+    Map<String, dynamic>? fetchUser = await _parentService.getStudent(widget.id);
+
+    if(fetchUser != null){
+      setState(() {
+        user = fetchUser;
+        _parentNameController.text = fetchUser['parentName'];
+        _contactNumberController.text = fetchUser['contactNo'];
+        _gradeController.text = fetchUser['grade'] + " - "+fetchUser['studentClass'] ;
+        _ageController.text = "${fetchUser['age']}";
+        _locationController.text = fetchUser['location'];
+      });
+    }
+
   }
 
   Future<void> _pickImage() async {

@@ -16,9 +16,9 @@ public interface DriverController {
     @ResponseBody
     HOResponse<List<Driver>> findAllUnAssigned();
 
-    @GetMapping("/{id}")
+    @GetMapping("/findById")
     @ResponseBody
-    HOResponse<Driver> findById(@PathVariable Long id);
+    HOResponse<Driver> findById(@RequestParam Long id);
 
     @PostMapping()
     @ResponseBody

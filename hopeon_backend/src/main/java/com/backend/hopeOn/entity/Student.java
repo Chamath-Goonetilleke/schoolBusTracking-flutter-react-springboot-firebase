@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity(name = "student")
@@ -31,4 +33,6 @@ public class Student extends User{
     @ManyToOne
     @JoinColumn(name = "vehicle_id", referencedColumnName ="id")
     private Vehicle vehicle;
+    @OneToMany(mappedBy = "student")
+    private List<Schedule> schedules;
 }

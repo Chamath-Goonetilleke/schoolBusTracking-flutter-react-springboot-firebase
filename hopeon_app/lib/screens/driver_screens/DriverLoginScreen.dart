@@ -104,7 +104,7 @@ class _DriverLoginScreenState extends State<DriverLoginScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                    const ForgotPasswordScreen()),
+                                    const ForgotPasswordScreen(type: "DRIVER",)),
                               );
                             },),
                           ],

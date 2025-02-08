@@ -4,14 +4,14 @@ import 'package:hopeon_app/screens/driver_screens/DriverAttendanceScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverBottomNavBar.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverTripTrackingScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/AttendanceMarkScreen.dart';
-import 'package:hopeon_app/screens/parent_screens/DriverInfoScreen.dart';
+import 'package:hopeon_app/screens/common_screens/DriverInfoScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentAlertScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentTrackMyBusScreen.dart';
-import 'package:hopeon_app/screens/parent_screens/StudentInfoScreen.dart';
+import 'package:hopeon_app/screens/common_screens/StudentInfoScreen.dart';
 
 class DriverDashboardScreen extends StatefulWidget {
-  const DriverDashboardScreen({Key? key}) : super(key: key);
+  const DriverDashboardScreen({super.key});
 
   @override
   _DriverDashboardScreenState createState() => _DriverDashboardScreenState();
@@ -93,21 +93,21 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const ParentAlertScreen()),
+                        builder: (context) => ParentAlertScreen(driverId: "1",)),
                   );
                 }),
                 _buildFeatureIcon(Icons.perm_identity, "Driver Info", onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => DriverInfoScreen()),
+                        builder: (context) => DriverInfoScreen(id:"2")),
                   );
                 }),
                 _buildFeatureIcon(Icons.person, "Student Info", onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => StudentInfoScreen()),
+                        builder: (context) => StudentInfoScreen(id:"1")),
                   );
                 }),
                 _buildFeatureIcon(Icons.headset_mic, "Need Help", onTap: () {

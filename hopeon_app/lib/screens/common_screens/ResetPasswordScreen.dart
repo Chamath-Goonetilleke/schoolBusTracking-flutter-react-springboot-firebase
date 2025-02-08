@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverLoginScreen.dart';
+import 'package:hopeon_app/screens/parent_screens/ParentLoginScreen.dart';
+import 'package:hopeon_app/services/auth_service.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
+  final String email;
+  final String type;
+
+  const ResetPasswordScreen({super.key, required this.email, required this.type});
   @override
   _ResetPasswordScreenState createState() => _ResetPasswordScreenState();
 }
@@ -8,6 +15,62 @@ class ResetPasswordScreen extends StatefulWidget {
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+  final AuthService _authService = AuthService();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  void _handleResetPassword() async {
+    setState(() {
+      _errorMessage = null;
+    });
+
+    String password = _passwordController.text.trim();
+    String confirmPassword = _confirmPasswordController.text.trim();
+
+    if (password.isEmpty || confirmPassword.isEmpty) {
+      setState(() {
+        _errorMessage = "Fields cannot be empty.";
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      setState(() {
+        _errorMessage = "Password must be at least 6 characters long.";
+      });
+      return;
+    }
+
+    if (password != confirmPassword) {
+      setState(() {
+        _errorMessage = "Passwords do not match.";
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    bool isSuccess = await _authService.resetPassword(widget.email, password, widget.type);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (isSuccess) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => widget.type == "STUDENT"? ParentLoginScreen(): DriverLoginScreen()),
+      );
+    } else {
+      setState(() {
+        _errorMessage = "Failed to reset password. Try again.";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +90,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             ),
             const SizedBox(height: 40),
             TextField(
+              controller: _passwordController,
               obscureText: !_isPasswordVisible,
               decoration: InputDecoration(
                 labelText: "New Password",
@@ -56,6 +120,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             ),
             const SizedBox(height: 16),
             TextField(
+              controller: _confirmPasswordController,
               obscureText: !_isConfirmPasswordVisible,
               decoration: InputDecoration(
                 labelText: "Confirm Password",
@@ -83,6 +148,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 style: TextStyle(fontSize: 12, color: Colors.grey),
               ),
             ),
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
@@ -94,10 +167,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                onPressed: () {
-                  // Implement password reset logic
-                },
-                child: const Text(
+                onPressed: _isLoading ? null : _handleResetPassword,
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
                   "Reset Password",
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),

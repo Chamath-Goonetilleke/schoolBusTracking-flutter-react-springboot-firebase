@@ -1,31 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/services/alert_service.dart';
 
 class ParentAlertScreen extends StatefulWidget {
-  const ParentAlertScreen({super.key});
+  final String driverId;
+  const ParentAlertScreen({super.key, required this.driverId});
 
   @override
   State<ParentAlertScreen> createState() => _ParentAlertScreenState();
 }
 
 class _ParentAlertScreenState extends State<ParentAlertScreen> {
-  final List<Map<String, String>> alerts = [
-    {
-      "date": "2025/02/14 - 07:15AM",
-      "message": "This is an important message regarding your child's school bus. Due to an unforeseen situation, the bus is experiencing a delay. We are experiencing an emergency situation with the school bus. Please know that all students are safe, and we are working to resolve the issue as quickly as possible. There may be a delay in the bus's arrival. We will send another update soon."
-    },
-    {
-      "date": "2025/02/12 - 06:45AM",
-      "message": "This is an urgent update regarding your child's bus. We are currently facing an unexpected issue, and the bus will be delayed. The safety of all students is our top priority, and we are addressing the situation. We will provide you with more information as it becomes available."
-    },
-    {
-      "date": "2025/02/08 - 02:05PM",
-      "message": "This is a quick update about your child's bus. Due to an emergency, there is a delay in the bus's route."
-    },
-    {
-      "date": "2025/02/05 - 01:45PM",
-      "message": "We are experiencing an emergency situation with the school bus. Please know that all students are safe and we are working to resolve the issue as......"
-    },
-  ];
+  List<dynamic> alerts = [];
+
+  AlertService _alertService = AlertService();
+  bool _isLoading = false;
+
+  void _loadAlerts() async {
+    setState(() {
+      _isLoading = true;
+    });
+    Map<String, dynamic> res =
+    await _alertService.getAllAlerts(widget.driverId);
+    if (res['success']) {
+      List<dynamic> fetchedAlerts = res['body'];
+
+      setState(() {
+        alerts = fetchedAlerts;
+        _isLoading = false;
+
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    _loadAlerts();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +49,7 @@ class _ParentAlertScreenState extends State<ParentAlertScreen> {
         title: const Text("Alert"),
         backgroundColor: Colors.blue,
       ),
-      body: ListView.builder(
+      body: alerts.isEmpty ? Center(child: Text("No Alerts", style: TextStyle(fontSize: 18),)):ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: alerts.length,
         itemBuilder: (context, index) {
@@ -54,7 +70,7 @@ class _ParentAlertScreenState extends State<ParentAlertScreen> {
             ),
           );
         },
-      ),
+      )
     );
   }
 }

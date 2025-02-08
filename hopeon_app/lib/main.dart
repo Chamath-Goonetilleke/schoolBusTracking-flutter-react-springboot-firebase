@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hopeon_app/screens/common_screens/InitialLoadingScreen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 

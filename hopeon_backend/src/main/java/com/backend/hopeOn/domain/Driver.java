@@ -19,4 +19,5 @@ public class Driver extends User{
     private Long vehicleId;
     private String vehicleNo;
     private String vehicleDetails;
+    private String vehicleRoute;
 }

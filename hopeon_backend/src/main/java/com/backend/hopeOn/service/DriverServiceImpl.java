@@ -9,6 +9,7 @@ import com.backend.hopeOn.repository.DriverRepository;
 import com.backend.hopeOn.repository.UserRepository;
 import com.backend.hopeOn.repository.VehicleRepository;
 import com.backend.hopeOn.util.PasswordHashingUtil;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class DriverServiceImpl implements DriverService {
     private final UserRepository userRepository;
     private final DriverRepository driverRepository;
     private final VehicleRepository vehicleRepository;
+    private final EmailService emailService;
 
     @Override
     public HOResponse<List<Driver>> findAll() {
@@ -50,7 +52,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public HOResponse<Driver> findById(Long id) {
-        return driverRepository.findById(id).map(driver -> {
+        return driverRepository.findByIdAndActiveIsTrue(id).map(driver -> {
             HOResponse<Driver> response = new HOResponse<>();
             response.setStatus(HttpStatus.OK.value());
             response.setMessage("Driver fetched successfully.");
@@ -95,7 +97,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public HOResponse<Driver> save(Driver driver) {
+    public HOResponse<Driver> save(Driver driver) throws MessagingException {
         HOResponse<Driver> response = new HOResponse<>();
 
         if(validateDriver(driver) != null) {
@@ -110,6 +112,7 @@ public class DriverServiceImpl implements DriverService {
         }
 
         com.backend.hopeOn.entity.Driver newDriver = userRepository.save(domainToEntityMapper(driver));
+        emailService.sendCredentials(driver.getEmail(), driver.getPassword());
 
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Driver saved successfully.");
@@ -186,6 +189,7 @@ public class DriverServiceImpl implements DriverService {
             driverDomain.setVehicleId(driverEntity.getVehicle().getId());
             driverDomain.setVehicleNo(driverEntity.getVehicle().getVehicleNo());
             driverDomain.setVehicleDetails(driverEntity.getVehicle().getType()+", "+driverEntity.getVehicle().getBrand()+", "+driverEntity.getVehicle().getModel());
+            driverDomain.setVehicleRoute(driverEntity.getVehicle().getRoute());
         }
         return driverDomain;
     }

@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
         response.setMessage("Authentication successful");
 
         AuthResponse authResponse = new AuthResponse();
+        authResponse.setId(existingUser.getId());
         authResponse.setEmail(existingUser.getEmail());
         authResponse.setFullName(existingUser.getFullName());
         authResponse.setType(existingUser.getType());
@@ -55,11 +56,8 @@ public class UserServiceImpl implements UserService {
         if(optionalUser.isEmpty()) throw new HOException("Bad credentials");
 
         com.backend.hopeOn.entity.User existingUser = optionalUser.get();
-        if(!passwordHashingUtil.verifyPassword(passwordResetRequest.getOldPassword(), existingUser.getPassword())){
-            throw new HOException("Bad credentials");
-        }else{
-            existingUser.setPassword(passwordHashingUtil.hashPassword(passwordResetRequest.getNewPassword()));
-        }
+        existingUser.setPassword(passwordHashingUtil.hashPassword(passwordResetRequest.getNewPassword()));
+
 
         userRepository.save(existingUser);
 

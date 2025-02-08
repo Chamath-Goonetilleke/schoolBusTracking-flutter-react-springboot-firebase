@@ -1,10 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:hopeon_app/screens/common_screens/ResetPasswordScreen.dart';
+import 'package:hopeon_app/services/auth_service.dart';
 
-class OTPVerificationScreen extends StatelessWidget {
-  OTPVerificationScreen({super.key});
+class OTPVerificationScreen extends StatefulWidget {
+  final String email;
+  final String type;
+  OTPVerificationScreen({super.key, required this.email, required this.type});
 
-  final TextEditingController otpController = TextEditingController();
+  @override
+  State<OTPVerificationScreen> createState() => _OTPVerificationScreenState();
+}
+
+class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
+  final List<TextEditingController> otpControllers =
+  List.generate(4, (index) => TextEditingController());
+  final AuthService _authService = AuthService();
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  void _handleVerifyOTP() async {
+    setState(() {
+      _errorMessage = null;
+    });
+
+    String otp = otpControllers.map((controller) => controller.text).join();
+
+    if (otp.length < 4 || otp.contains(RegExp(r'[^0-9]'))) {
+      setState(() {
+        _errorMessage = "Please enter a valid 4-digit OTP.";
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    bool isValid = await _authService.verifyOTP(widget.email, otp);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (isValid) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ResetPasswordScreen(email: widget.email, type:widget.type)),
+      );
+    } else {
+      setState(() {
+        _errorMessage = "Invalid OTP. Please try again.";
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +86,7 @@ class OTPVerificationScreen extends StatelessWidget {
                   child: SizedBox(
                     width: 50,
                     child: TextField(
+                      controller: otpControllers[index],
                       textAlign: TextAlign.center,
                       keyboardType: TextInputType.number,
                       maxLength: 1,
@@ -50,26 +99,35 @@ class OTPVerificationScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
+                      onChanged: (value) {
+                        if (value.isNotEmpty && index < 3) {
+                          FocusScope.of(context).nextFocus();
+                        }
+                      },
                     ),
                   ),
                 ),
               ),
             ),
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: MaterialButton(
                 padding: const EdgeInsets.all(10),
                 color: const Color.fromRGBO(37, 100, 255, 1.0),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ResetPasswordScreen()),
-                  );
-                },
+                onPressed: _isLoading ? null : _handleVerifyOTP,
                 minWidth: 300,
-                child: const Text("Continue",
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("Continue",
                     style: TextStyle(fontSize: 20, color: Colors.white)),
               ),
             ),
@@ -77,7 +135,7 @@ class OTPVerificationScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Didn’t have OTP?"),
+                const Text("Didn’t receive OTP?"),
                 TextButton(
                   onPressed: () {},
                   child: const Text(

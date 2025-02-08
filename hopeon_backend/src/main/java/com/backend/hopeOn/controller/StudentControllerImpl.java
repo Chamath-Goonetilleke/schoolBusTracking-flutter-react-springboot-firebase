@@ -40,6 +40,15 @@ public class StudentControllerImpl implements StudentController{
     }
 
     @Override
+    public HOResponse<Student> findById(Long id) {
+        try {
+            return studentService.findById(id);
+        }catch (Exception e){
+            throw new HOException(e.getMessage());
+        }
+    }
+
+    @Override
     public HOResponse<Student> assignVehicle(Long id, Long vehicleId) {
         try {
             return studentService.assignVehicle(id, vehicleId);

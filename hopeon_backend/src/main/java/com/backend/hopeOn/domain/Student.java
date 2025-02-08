@@ -3,6 +3,8 @@ package com.backend.hopeOn.domain;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class Student extends User{
@@ -24,4 +26,5 @@ public class Student extends User{
     private String driverName;
     private String driverContactNo;
     private String driverNIC;
+    private List<Schedule> schedules;
 }

@@ -1,9 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/screens/common_screens/OTPVerificationScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/EditStudentScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
+import 'package:hopeon_app/screens/parent_screens/ParentLoginScreen.dart';
+import 'package:hopeon_app/services/auth_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ParentProfileScreen extends StatelessWidget {
+class ParentProfileScreen extends StatefulWidget {
   const ParentProfileScreen({Key? key}) : super(key: key);
+
+  @override
+  State<ParentProfileScreen> createState() => _ParentProfileScreenState();
+}
+
+class _ParentProfileScreenState extends State<ParentProfileScreen> {
+  late Map<String, String?> user;
+  final AuthService _authService = AuthService();
+
+  bool _isLoading = false;
+
+  void _handleOTPSend() async {
+    setState(() => _isLoading = true);
+
+    bool success =
+    await _authService.sendOTPRequest(user['email']!, "STUDENT");
+
+    setState(() => _isLoading = false);
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => OTPVerificationScreen(email: user['email']!, type: "STUDENT",)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Invalid email")),
+      );
+    }
+  }
+
+  Future<void> getUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      user={
+        "id": prefs.getString("user_id"),
+        "email": prefs.getString("user_email"),
+        "type": prefs.getString("user_type"),
+        "fullName": prefs.getString("full_name"),
+      };
+    });
+  }
+
+  @override
+  void initState() {
+    getUser();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +78,7 @@ class ParentProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             // Student Name
-            const Text("Dinelka Perera",
+            Text(user['fullName']!,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
             const SizedBox(height: 80),
             // Buttons
@@ -34,11 +86,18 @@ class ParentProfileScreen extends StatelessWidget {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => EditStudentScreen()),
+                    builder: (context) => EditStudentScreen(id:user['id']!)),
               );
             }),
-            _buildButton("Reset Password", (){}),
-            _buildButton("Log Out", (){}),
+            _buildButton("Reset Password", _handleOTPSend),
+            _buildButton("Log Out", (){
+              _authService.logOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const ParentLoginScreen()),
+              );
+            }),
           ],
         ),
       ),

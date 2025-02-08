@@ -9,6 +9,7 @@ import com.backend.hopeOn.repository.StudentRepository;
 import com.backend.hopeOn.repository.UserRepository;
 import com.backend.hopeOn.repository.VehicleRepository;
 import com.backend.hopeOn.util.PasswordHashingUtil;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class StudentServiceImpl implements StudentService{
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
     private final VehicleRepository vehicleRepository;
+    private final EmailService emailService;
 
     @Override
     public HOResponse<List<Student>> findAll() {
@@ -39,7 +41,19 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public HOResponse<Student> findById(Long id) {
-        return null;
+        HOResponse<Student> response = new HOResponse<>();
+
+        Optional<com.backend.hopeOn.entity.Student> optionalStudent = studentRepository.findByIdAndActiveIsTrue(id);
+        if(optionalStudent.isEmpty()){
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student not found");
+            return response;
+        }
+
+        response.setStatus(HttpStatus.OK.value());
+        response.setObject(StudentEntityToDomainMapper(optionalStudent.get()));
+
+        return response;
     }
 
     @Override
@@ -48,7 +62,7 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public HOResponse<Student> save(Student student) {
+    public HOResponse<Student> save(Student student) throws MessagingException {
         HOResponse<Student> response =  new HOResponse<>();
 
         if(!StringUtils.hasText(student.getRegNo())){
@@ -89,6 +103,8 @@ public class StudentServiceImpl implements StudentService{
         }
 
         com.backend.hopeOn.entity.Student newStudent = userRepository.save(DomainToEntityMapper(student));
+
+        emailService.sendCredentials(student.getEmail(), student.getPassword());
 
         response.setStatus(HttpStatus.OK.value());
         response.setObject(StudentEntityToDomainMapper(newStudent));
@@ -175,6 +191,8 @@ public class StudentServiceImpl implements StudentService{
                 studentDomain.setDriverContactNo(studentEntity.getVehicle().getDriver().getContactNo());
             }
         }
+
+        //studentDomain.setSchedules(studentEntity.getSchedules());
 
         return studentDomain;
     }
