@@ -1,9 +1,12 @@
 package com.backend.hopeOn.controller;
 
 import com.backend.hopeOn.domain.Vehicle;
+import com.backend.hopeOn.enums.AttendanceType;
 import com.backend.hopeOn.generic.HOResponse;
+import com.backend.hopeOn.response.AttendanceResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface VehicleController {
@@ -15,7 +18,9 @@ public interface VehicleController {
     @GetMapping("/findAllAssignable")
     @ResponseBody
     HOResponse<List<Vehicle>> findAllAssignable();
-
+    @GetMapping("/getStudentAttendance")
+    @ResponseBody
+    HOResponse<List<AttendanceResponse>> getStudentAttendance(@RequestParam LocalDate date, @RequestParam Long vehicleId, @RequestParam AttendanceType type);
     @GetMapping("/{id}")
     @ResponseBody
     HOResponse<Vehicle> findById(@PathVariable Long id);

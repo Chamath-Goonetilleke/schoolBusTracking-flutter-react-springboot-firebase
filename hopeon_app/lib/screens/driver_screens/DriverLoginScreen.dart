@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hopeon_app/screens/common_screens/ForgotPasswordScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverDashboardScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentDashboardScreen.dart';
+import 'package:hopeon_app/services/auth_service.dart';
 
 class DriverLoginScreen extends StatefulWidget {
   const DriverLoginScreen({Key? key}) : super(key: key);
@@ -14,6 +15,36 @@ class _DriverLoginScreenState extends State<DriverLoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
+  bool _isLoading = false;
+
+  void _handleLogin() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isLoading = true);
+
+      bool success = await _authService.login(
+          _emailController.text.trim(),
+          _passwordController.text.trim(),
+          "DRIVER"
+      );
+
+      setState(() => _isLoading = false);
+
+      if (success) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DriverDashboardScreen()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Invalid email or password")),
+        );
+      }
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,23 +143,11 @@ class _DriverLoginScreenState extends State<DriverLoginScreen> {
                       ),
                       const SizedBox(height: 30),
                       MaterialButton(
-                        onPressed: () {
-                          if (!_formKey.currentState!.validate()) {
-                            // Handle login logic
-                            // ScaffoldMessenger.of(context).showSnackBar(
-                            //   const SnackBar(content: Text('Logging in...')),
-                            // );
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                  const DriverDashboardScreen()),
-                            );
-                          }
-                        },
+                        onPressed: _handleLogin,
                         minWidth: 300,
                         color: Color.fromRGBO(58, 89, 243, 1),
-                        child: const Text(
+                        child: _isLoading
+                            ? const CircularProgressIndicator() : const Text(
                           "Log In",
                           style: TextStyle(color: Colors.white),
                         ),

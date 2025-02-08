@@ -25,6 +25,7 @@ class _ParentLoginScreenState extends State<ParentLoginScreen> {
       bool success = await _authService.login(
         _emailController.text.trim(),
         _passwordController.text.trim(),
+          "STUDENT"
       );
 
       setState(() => _isLoading = false);

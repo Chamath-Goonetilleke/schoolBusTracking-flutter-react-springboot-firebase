@@ -56,11 +56,20 @@ class _ParentAlertScreenState extends State<ParentAlertScreen> {
           return Card(
             margin: const EdgeInsets.symmetric(vertical: 1),
             child: ExpansionTile(
+              initiallyExpanded: true,
               leading: const Icon(Icons.warning, color: Colors.red),
-              title: Text(
-                alerts[index]['date']!,
-                style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "${(alerts[index]['sendAt']! + "").split("T")[0]}",
+                    style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                  ),
+                  Text(((alerts[index]['sendAt']!+"").split("T")[1].toString()).split(".")[0],
+                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                ],
               ),
+
               children: [
                 Padding(
                   padding: const EdgeInsets.all(10),

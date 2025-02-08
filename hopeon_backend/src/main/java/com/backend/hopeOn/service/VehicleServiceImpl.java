@@ -3,15 +3,20 @@ package com.backend.hopeOn.service;
 import com.backend.hopeOn.domain.Student;
 import com.backend.hopeOn.domain.Vehicle;
 import com.backend.hopeOn.entity.Driver;
+import com.backend.hopeOn.entity.Schedule;
+import com.backend.hopeOn.enums.AttendanceType;
 import com.backend.hopeOn.generic.HOException;
 import com.backend.hopeOn.generic.HOResponse;
 import com.backend.hopeOn.repository.VehicleRepository;
+import com.backend.hopeOn.response.AttendanceResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +48,45 @@ public class VehicleServiceImpl implements VehicleService {
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Vehicle list fetched successfully");
         response.setObject(vehicleList);
+
+        return response;
+    }
+
+    @Override
+    public HOResponse<List<AttendanceResponse>> getStudentAttendance(LocalDate date, Long vehicleId, AttendanceType type) {
+        com.backend.hopeOn.entity.Vehicle vehicleEntity = vehicleRepository.findByIdAndActiveIsTrue(vehicleId)
+                .orElseThrow(() -> new HOException("Vehicle not found"));
+
+        List<AttendanceResponse> attendance = new ArrayList<>();
+
+        for (com.backend.hopeOn.entity.Student student: vehicleEntity.getStudentList()
+             ) {
+            AttendanceResponse attendResponse = new AttendanceResponse();
+            attendResponse.setId(student.getId());
+            attendResponse.setRegNo(student.getRegNo());
+            attendResponse.setFullName(student.getFullName());
+            attendResponse.setGrade(student.getGrade());
+            attendResponse.setStudentClass(student.getStudentClass());
+            attendResponse.setImageUrl(student.getImageUrl());
+
+            List<Schedule> stSchedules = student.getSchedules().stream().filter(schedule -> schedule.getDate().equals(date)).toList();
+
+            if(!stSchedules.isEmpty()){
+                if(Objects.equals(AttendanceType.TO_SCHOOL, type)){
+                    attendResponse.setAttendance(stSchedules.get(0).getToSchool());
+                } else if (Objects.equals(AttendanceType.TO_HOME, type)) {
+                    attendResponse.setAttendance(stSchedules.get(0).getToHome());
+                }
+            }else {
+                attendResponse.setAttendance(false);
+            }
+
+            attendance.add(attendResponse);
+        }
+
+        HOResponse<List<AttendanceResponse>> response = new HOResponse<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setObject(attendance);
 
         return response;
     }

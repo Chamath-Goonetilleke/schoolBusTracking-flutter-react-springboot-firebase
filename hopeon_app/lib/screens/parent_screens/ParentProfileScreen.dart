@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/screens/common_screens/GetStartScreen.dart';
 import 'package:hopeon_app/screens/common_screens/OTPVerificationScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/EditStudentScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
@@ -95,7 +96,7 @@ class _ParentProfileScreenState extends State<ParentProfileScreen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const ParentLoginScreen()),
+                    builder: (context) => const GetStartScreen()),
               );
             }),
           ],

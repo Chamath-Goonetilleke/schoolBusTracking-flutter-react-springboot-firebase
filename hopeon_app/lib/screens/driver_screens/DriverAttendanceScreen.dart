@@ -4,7 +4,9 @@ import 'package:hopeon_app/screens/driver_screens/ToSchoolAttendanceScreen.dart'
 import 'package:table_calendar/table_calendar.dart';
 
 class DriverAttendanceScreen extends StatefulWidget {
-  const DriverAttendanceScreen({super.key});
+  final String vehicleId;
+
+  const DriverAttendanceScreen({super.key, required this.vehicleId});
 
   @override
   _DriverAttendanceScreenState createState() => _DriverAttendanceScreenState();
@@ -31,7 +33,7 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TableCalendar(
-              firstDay: DateTime.utc(DateTime.now().year-1, 01, 01),
+              firstDay: DateTime.utc(DateTime.now().year - 1, 01, 01),
               lastDay: DateTime.utc(2030, 12, 31),
               focusedDay: _focusedDay,
               selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
@@ -57,7 +59,8 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            const Text("To School", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text("To School",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             MaterialButton(
               padding: const EdgeInsets.all(10),
@@ -66,8 +69,10 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                      const ToSchoolAttendanceScreen()),
+                      builder: (context) => ToSchoolAttendanceScreen(
+                            vehicleId: widget.vehicleId,
+                            date: _selectedDay.toIso8601String().split("T")[0],
+                          )),
                 );
               },
               minWidth: 300,
@@ -75,7 +80,8 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen> {
                   style: TextStyle(fontSize: 16, color: Colors.white)),
             ),
             const SizedBox(height: 30),
-            const Text("To Home", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text("To Home",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             MaterialButton(
               padding: const EdgeInsets.all(10),
@@ -84,8 +90,9 @@ class _DriverAttendanceScreenState extends State<DriverAttendanceScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                      const ToHomeAttendanceScreen()),
+                      builder: (context) => ToHomeAttendanceScreen(
+                          vehicleId: widget.vehicleId,
+                          date: _selectedDay.toIso8601String().split("T")[0])),
                 );
               },
               minWidth: 300,

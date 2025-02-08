@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hopeon_app/screens/common_screens/NeedHelpScreen.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverAlertScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverAttendanceScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverBottomNavBar.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverStudentsScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverTripTrackingScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/AttendanceMarkScreen.dart';
 import 'package:hopeon_app/screens/common_screens/DriverInfoScreen.dart';
@@ -9,6 +11,8 @@ import 'package:hopeon_app/screens/parent_screens/ParentAlertScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentTrackMyBusScreen.dart';
 import 'package:hopeon_app/screens/common_screens/StudentInfoScreen.dart';
+import 'package:hopeon_app/services/driver_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DriverDashboardScreen extends StatefulWidget {
   const DriverDashboardScreen({super.key});
@@ -18,10 +22,47 @@ class DriverDashboardScreen extends StatefulWidget {
 }
 
 class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
+  late Map<String, String?> user;
+  final DriverService _driverService = DriverService();
+  late Map<String, dynamic>? driver;
+  bool _isLoading = false;
+
+  Future<void> getUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic>? fetchUser =
+    await _driverService.getDriver(prefs.getString("user_id")!);
+    if (fetchUser != null) {
+      setState(() {
+        driver = fetchUser;
+      });
+    }
+    setState(() {
+      user={
+        "id": prefs.getString("user_id"),
+        "email": prefs.getString("user_email"),
+        "type": prefs.getString("user_type"),
+        "fullName": prefs.getString("full_name"),
+      };
+      _isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    getUser();
+    super.initState();
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body:_isLoading ? const Center(
+        child: CircularProgressIndicator(color: Colors.blue),
+      ): Column(
         children: [
           // Top Section with Gradient Background
           Container(
@@ -38,23 +79,23 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
                 bottomRight: Radius.circular(30),
               ),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 40,
                   backgroundImage: AssetImage("assets/images/profile-driver.png"),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "Welcome",
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                     Text(
-                      "Anil Karunathilaka",
-                      style: TextStyle(
+                      user['fullName']!,
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 22,
                           fontWeight: FontWeight.bold),
@@ -79,35 +120,35 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => DriverAttendanceScreen()),
+                        builder: (context) => DriverAttendanceScreen(vehicleId: driver!['vehicleId'].toString(),)),
                   );
                 }),
                 _buildFeatureIcon(Icons.directions_bus, "Track My Bus", onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => DriverTripTrackingScreen()),
+                        builder: (context) => const DriverTripTrackingScreen()),
                   );
                 }),
                 _buildFeatureIcon(Icons.emergency, "Emergency", onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ParentAlertScreen(driverId: "1",)),
+                        builder: (context) =>  DriverAlertScreen(driverId: user['id']!,),)
                   );
                 }),
                 _buildFeatureIcon(Icons.perm_identity, "Driver Info", onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => DriverInfoScreen(id:"2")),
+                        builder: (context) => DriverInfoScreen(id:user['id']!)),
                   );
                 }),
                 _buildFeatureIcon(Icons.person, "Student Info", onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => StudentInfoScreen(id:"1")),
+                        builder: (context) => DriverStudentsScreen(vehicleId: driver!['vehicleId'].toString())),
                   );
                 }),
                 _buildFeatureIcon(Icons.headset_mic, "Need Help", onTap: () {
@@ -122,7 +163,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: DriverBottomNavBar(selectedScreen: 0),
+      bottomNavigationBar: const DriverBottomNavBar(selectedScreen: 0),
     );
   }
 

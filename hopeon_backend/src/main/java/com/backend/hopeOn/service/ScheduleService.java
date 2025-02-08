@@ -10,4 +10,6 @@ public interface ScheduleService {
     HOResponse<String> save(Schedule schedule);
     HOResponse<List<Schedule>> findAllSchedule(Long studentId);
 
+
+
 }
