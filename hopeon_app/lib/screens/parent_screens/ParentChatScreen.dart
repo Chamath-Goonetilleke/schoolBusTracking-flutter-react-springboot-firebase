@@ -1,115 +1,186 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/models/message_model.dart';
+import 'package:hopeon_app/screens/common_screens/ChatDetailScreen.dart';
 import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
+import 'package:hopeon_app/services/chat_provider.dart';
+import 'package:hopeon_app/services/chat_service.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 
 class ParentChatScreen extends StatefulWidget {
+
+  final String driverId;
+  final String driverName;
+
+  ParentChatScreen({
+    required this.driverId,
+    required this.driverName,
+  });
+
   @override
-  _ParentChatScreenState createState() => _ParentChatScreenState();
+  State<ParentChatScreen> createState() => _ParentChatScreenState();
 }
 
 class _ParentChatScreenState extends State<ParentChatScreen> {
-  final List<Map<String, dynamic>> messages = [
-    {'text': 'Hi, good morning. Is the bus running on time today?', 'isMe': true},
-    {'text': 'Good morning! Yes, the bus is on schedule and will reach your stop at 7:45 AM.', 'isMe': false},
-    {'text': 'Thank you for confirming. Is there any delay on the route today?', 'isMe': true},
-    {'text': 'No delays so far, but I’ll notify you if anything changes.', 'isMe': false},
-    {'text': 'Great! Also, could you please remind my child to take their lunchbox from the bag?', 'isMe': true},
-    {'text': 'Sure, I’ll inform them as soon as they board.', 'isMe': false},
-    {'text': 'Thanks a lot for your help and Kindness!', 'isMe': true},
-  ];
+  final ChatService chatService = ChatService(currentUserId: "1");
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(37, 100, 255, 1.0),
+          title: Text('Messages'),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'Driver Chat'),
+              Tab(text: 'Announcements'),
+            ],
+            indicatorColor: Colors.white,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white70,
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            ChatDetailScreen(
+              chatService:chatService,
+              otherUserId: widget.driverId,
+              otherUserName: widget.driverName,
+            ),
+            GlobalMessagesList(chatService: chatService),
+          ],
+        ),
+        bottomNavigationBar: ParentBottomNavBar(selectedScreen: 2),
+      ),
+    );
+  }
+}
+
+class GlobalMessagesList extends StatelessWidget {
+  final ChatService chatService;
+
+  const GlobalMessagesList({
+    Key? key,
+    required this.chatService,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          // Chat Header
-          Container(
-            width: double.infinity,
-            color: const Color.fromRGBO(37, 100, 255, 1.0),
-            padding: const EdgeInsets.fromLTRB(30, 80, 10, 20),
-            child: const Text(
-              "Chat with Driver",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-          ),
+    return StreamBuilder<List<Message>>(
+      stream: chatService.getGlobalMessages(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
 
-          // Chat Messages
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(10.0),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final message = messages[index];
-                bool isMe = message['isMe'];
-
-                return Padding(
-                  padding: message['isMe'] ? const EdgeInsets.fromLTRB(70, 0, 0, 10):const EdgeInsets.fromLTRB(0, 0, 70, 10),
-                  child: Row(
-                    mainAxisAlignment:
-                    isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-                    children: [
-                      if (!isMe) // Driver's Avatar (Left)
-                        const CircleAvatar(
-                          radius: 20,
-                          backgroundImage: NetworkImage("https://cdn-icons-png.flaticon.com/512/2922/2922510.png"), // Replace with your driver image
-                        ),
-
-                      // Message Bubble
-                      Flexible(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: isMe ? Colors.blue[200] : Colors.grey[300],
-                            borderRadius: BorderRadius.only(topLeft: const Radius.circular(10), topRight: const Radius.circular(10), bottomLeft: isMe ?const Radius.circular(10): Radius.zero, bottomRight: isMe ? Radius.zero:Radius.circular(10)),
-                          ),
-                          child: Text(
-                            message['text'],
-                            style: const TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
-
-
-                      if (isMe) // Parent's Avatar (Right)
-                        const CircleAvatar(
-                          radius: 20,
-                          backgroundImage: NetworkImage("https://cdn-icons-png.flaticon.com/512/2922/2922561.png"), // Replace with your parent image
-                        ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-
-          // Message Input
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Message",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 15),
-                    ),
-                  ),
+                Icon(
+                  Icons.announcement_outlined,
+                  size: 64,
+                  color: Colors.grey[400],
                 ),
-                const SizedBox(width: 10),
-                const CircleAvatar(
-                  backgroundColor: Colors.blue,
-                  child: Icon(Icons.send, color: Colors.white),
+                SizedBox(height: 16),
+                Text(
+                  'No announcements yet',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: const ParentBottomNavBar(selectedScreen: 2),
+          );
+        }
+
+        return ListView.builder(
+          padding: EdgeInsets.all(16),
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            final message = snapshot.data![index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(message.senderImageUrl),
+                            radius: 20,
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  message.senderName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  _formatTimestamp(message.timestamp),
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        message.content,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
+  }
+
+  String _formatTimestamp(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inHours < 1) {
+      final minutes = difference.inMinutes;
+      return '$minutes ${minutes == 1 ? 'minute' : 'minutes'} ago';
+    } else if (difference.inDays < 1) {
+      final hours = difference.inHours;
+      return '$hours ${hours == 1 ? 'hour' : 'hours'} ago';
+    } else if (difference.inDays < 7) {
+      final days = difference.inDays;
+      return '$days ${days == 1 ? 'day' : 'days'} ago';
+    } else {
+      return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
+    }
   }
 }

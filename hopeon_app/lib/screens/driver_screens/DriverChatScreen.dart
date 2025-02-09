@@ -114,7 +114,7 @@ class DriverChatScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final chat = chats[index];
           return ListTile(
-            style: ListTileStyle.list,
+            style: ListTileStyle.drawer,
             leading: CircleAvatar(
               backgroundImage: NetworkImage(chat['image']),
               radius: 28,
@@ -144,7 +144,7 @@ class DriverChatScreen extends StatelessWidget {
                       margin: EdgeInsets.only(top: 5),
                       padding: EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(37, 100, 255, 1.0),
+                        color: Colors.teal,
                         shape: BoxShape.circle,
                       ),
                       child: Text(

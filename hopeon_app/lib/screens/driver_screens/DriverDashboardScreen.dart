@@ -127,7 +127,7 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const DriverTripTrackingScreen()),
+                        builder: (context) => DriverTripTrackingScreen(id:  user['id']!,)),
                   );
                 }),
                 _buildFeatureIcon(Icons.emergency, "Emergency", onTap: () {

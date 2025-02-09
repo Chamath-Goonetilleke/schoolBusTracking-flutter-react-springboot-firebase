@@ -54,10 +54,10 @@ class _DriverSelectedChatScreenState extends State<DriverSelectedChatScreen> {
         backgroundColor: Color.fromRGBO(37, 100, 255, 1.0),
         leading: IconButton(
           onPressed: () => {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => DriverChatScreen()),
-            )
+            // Navigator.pushReplacement(
+            //   context,
+            //   //MaterialPageRoute(builder: (context) => DriverChatScreen()),
+            // )
           },
           icon: Icon(Icons.arrow_back_outlined, color: Colors.white,),
         ),

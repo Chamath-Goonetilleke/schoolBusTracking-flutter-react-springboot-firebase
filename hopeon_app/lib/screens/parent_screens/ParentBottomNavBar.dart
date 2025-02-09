@@ -49,7 +49,7 @@ class _ParentBottomNavBarState extends State<ParentBottomNavBar> {
       Navigator.push(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => ParentChatScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => ParentChatScreen(driverId: "2",driverName: "Sam",),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var fadeAnimation = Tween(begin: 1.0, end: 1.0).animate(animation);
             return FadeTransition(opacity: fadeAnimation, child: child);
