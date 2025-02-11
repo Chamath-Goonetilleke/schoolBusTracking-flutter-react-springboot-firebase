@@ -122,10 +122,10 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ParentTrackMyBusScreen()),
+                        builder: (context) => ParentTrackMyBusScreen(driverId: student!['driverId'].toString(),)),
                   );
                 }),
-                _buildFeatureIcon(Icons.notifications, "Alert", badgeCount: 3, onTap: () {
+                _buildFeatureIcon(Icons.notifications, "Alert",  onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(

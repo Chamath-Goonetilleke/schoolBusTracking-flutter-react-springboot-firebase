@@ -1,113 +1,99 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hopeon_app/models/message_model.dart';
 
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String currentUserId;
 
-  ChatService({required this.currentUserId});
-
-  // Send a message
-  Future<void> sendMessage({
-    required String content,
-    required String receiverId,
-    required bool isGlobal,
-    required String senderName,
-    required String senderImageUrl,
-  }) async {
-    final String messageId = _firestore.collection('messages').doc().id;
-    final message = Message(
-      id: messageId,
-      senderId: currentUserId,
-      receiverId: receiverId,
-      content: content,
-      timestamp: DateTime.now(),
-      isGlobal: isGlobal,
-      senderName: senderName,
-      senderImageUrl: senderImageUrl,
-    );
-
-    await _firestore.collection('messages').doc(messageId).set(message.toMap());
+  /// Fetch all chat rooms
+  Stream<QuerySnapshot> getChatRooms(String driverId) {
+    return _firestore.collection('chats')
+        .where('driverId', isEqualTo: driverId)
+        .snapshots();
   }
 
-  // Get chat list for driver (all students' parents)
-  Stream<List<Map<String, dynamic>>> getDriverChatList(String vehicleId) {
-    return _firestore
-        .collection('students')
-        .where('vehicle_id', isEqualTo: vehicleId)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs.map((doc) {
-        final student = doc.data();
-        return {
-          'parentId': student['parent_id'],
-          'parentName': student['parent_name'],
-          'studentName': student['full_name'],
-          'imageUrl': student['image_url'],
-        };
-      }).toList();
-    });
-  }
-
-  // Get messages between two users
-  Stream<List<Message>> getMessages(String otherUserId) {
+  /// Fetch messages for a chat
+  Stream<QuerySnapshot> getMessages(String chatId) {
     return _firestore
         .collection('messages')
-        .where('isGlobal', isEqualTo: false)
-        .where(Filter.or(
-      Filter.and(
-        Filter('senderId', isEqualTo: currentUserId),
-        Filter('receiverId', isEqualTo: otherUserId),
-      ),
-      Filter.and(
-        Filter('senderId', isEqualTo: otherUserId),
-        Filter('receiverId', isEqualTo: currentUserId),
-      ),
-    ))
+        .where('chatId', isEqualTo: chatId)
         .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => Message.fromMap(doc.data()))
-          .toList();
-    });
+        .snapshots();
   }
 
-  Future<void> markMessageAsRead(String messageId) async {
-    await _firestore
-        .collection('messages')
-        .doc(messageId)
-        .update({'isRead': true});
-  }
-
-  // Method to mark all messages from a sender as read
-  Future<void> markAllMessagesAsRead(String senderId) async {
-    final messages = await _firestore
-        .collection('messages')
-        .where('senderId', isEqualTo: senderId)
-        .where('receiverId', isEqualTo: currentUserId)
-        .where('isRead', isEqualTo: false)
+  Future<String> getChatId(String studentId)async{
+    QuerySnapshot chat = await _firestore
+        .collection('chats')
+        .where('studentId', isEqualTo: studentId)
         .get();
 
-    final batch = _firestore.batch();
-    for (var doc in messages.docs) {
-      batch.update(doc.reference, {'isRead': true});
-    }
-    await batch.commit();
+    return chat.docs.first['chatId'];
   }
 
 
-  // Get global messages
-  Stream<List<Message>> getGlobalMessages() {
-    return _firestore
+
+  /// Mark messages as read
+  Future<void> markMessagesAsRead(String chatId, String currentUserId) async {
+    QuerySnapshot unreadMessages = await _firestore
         .collection('messages')
-        .where('isGlobal', isEqualTo: true)
-        .orderBy('timestamp', descending: true)
-        .snapshots()
-        .map((snapshot) {
-      return snapshot.docs
-          .map((doc) => Message.fromMap(doc.data()))
-          .toList();
+        .where('chatId', isEqualTo: chatId)
+        .where('isRead', isEqualTo: false)
+        .where('receiverId', isEqualTo: currentUserId)
+        .get();
+
+    for (var doc in unreadMessages.docs) {
+      await doc.reference.update({'isRead': true});
+    }
+
+    await _firestore.collection('chats').doc(chatId).update({
+      'unreadCount': 0,
     });
+  }
+
+  /// Send a new message
+  Future<void> sendMessage({
+    required String chatId,
+    required String senderId,
+    required String receiverId,
+    required String message,
+  }) async {
+    await _firestore.collection('messages').add({
+      'chatId': chatId,
+      'text': message,
+      'senderId': senderId,
+      'receiverId': receiverId,
+      'timestamp': FieldValue.serverTimestamp(),
+      'isRead': false,
+    });
+
+    await _firestore.collection('chats').doc(chatId).update({
+      'lastMessage': message,
+      'lastTime': FieldValue.serverTimestamp(),
+      'unreadCount': FieldValue.increment(1),
+    });
+  }
+
+  Future<void> createDriverChats( String driverId, List<dynamic> students) async {
+    for(int i=0; i< students.length; i++){
+      Map<String, dynamic> student = students[i];
+      QuerySnapshot driverSendMessage = await _firestore
+          .collection('chats')
+          .where('driverId', isEqualTo: driverId)
+          .where('studentId', isEqualTo: student['id'].toString())
+          .get();
+
+      if (driverSendMessage.size <= 0) {
+        final chatsDoc =
+        FirebaseFirestore.instance.collection('chats').doc();
+
+        await chatsDoc.set({
+          'chatId': chatsDoc.id,
+          'driverId':driverId,
+          'studentId':student['id'].toString(),
+          'lastMessage': null,
+          'lastTime': FieldValue.serverTimestamp(),
+          'unreadCount': 0,
+        });
+      }
+    }
+
   }
 }

@@ -37,7 +37,7 @@ class _DriverBottomNavBarState extends State<DriverBottomNavBar> {
       Navigator.push(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => ParentTrackMyBusScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => ParentTrackMyBusScreen(driverId: "2",),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var fadeAnimation = Tween(begin: 1.0, end: 1.0).animate(animation);
             return FadeTransition(opacity: fadeAnimation, child: child);
@@ -52,7 +52,7 @@ class _DriverBottomNavBarState extends State<DriverBottomNavBar> {
       Navigator.push(
         context,
         PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => DriverChatScreen(),
+          pageBuilder: (context, animation, secondaryAnimation) => DriverChatScreen(vehicleId: '1', driverId: '2',),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var fadeAnimation = Tween(begin: 1.0, end: 1.0).animate(animation);
             return FadeTransition(opacity: fadeAnimation, child: child);

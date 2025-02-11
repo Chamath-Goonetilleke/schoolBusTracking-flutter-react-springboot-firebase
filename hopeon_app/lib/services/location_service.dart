@@ -19,19 +19,6 @@ class LocationService {
   LocationService({required this.userId});
 
   Future<void> startLocationTracking() async {
-    // Request location permissions
-    // LocationPermission permission = await Geolocator.requestPermission();
-    //
-    // if (permission == LocationPermission.denied ||
-    //     permission == LocationPermission.deniedForever) {
-    //   throw Exception('Location permissions are required');
-    // }
-    //
-    // // Check if location services are enabled
-    // bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    // if (!serviceEnabled) {
-    //   throw Exception('Location services are disabled');
-    // }
 
     _serviceEnabled= await location.serviceEnabled();
 
