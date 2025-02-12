@@ -12,3 +12,7 @@ export async function findAllAssignable() {
 export async function saveVehicle(vehicle) {
   return await http.post(endPoint, vehicle);
 }
+
+export async function updateVehicle(vehicle) {
+  return await http.put(endPoint, vehicle);
+}

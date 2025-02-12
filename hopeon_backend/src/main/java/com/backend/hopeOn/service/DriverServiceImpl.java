@@ -124,7 +124,7 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public HOResponse<Driver> update(Driver driver) {
         // Find existing driver entity from the database
-        Optional<com.backend.hopeOn.entity.Driver> optionalDriver = driverRepository.findByIdAndActiveIsTrue(driver.getId());
+        Optional<com.backend.hopeOn.entity.Driver> optionalDriver = driverRepository.findById(driver.getId());
 
         if (optionalDriver.isEmpty()) {
             throw new HOException("Driver not found", HttpStatus.BAD_REQUEST);

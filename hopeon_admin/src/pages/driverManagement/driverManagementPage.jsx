@@ -55,7 +55,7 @@ export default function DriverManagementPage() {
   if (isDriverSelected === true) {
     return (
       <SingleDriverPage
-        driver={selectedDriver}
+        driverData={selectedDriver}
         setIsDriverSelected={setIsDriverSelected}
         setSelectedDriver={setSelectedDriver}
       />

@@ -5,7 +5,7 @@ import {
   TextField,
   FormControlLabel,
 } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { styled } from "@mui/material/styles";
@@ -13,6 +13,7 @@ import Switch from "@mui/material/Switch";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import AddIcon from "@mui/icons-material/Add";
 import AssignDriverListModel from "../../components/AssignDriverListModel";
+import { updateVehicle } from "../../service/vehicleService";
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -48,18 +49,35 @@ const IOSSwitch = styled((props) => (
   },
 }));
 export default function SingleVehiclePage({
-  vehicle,
+  vehicleDate,
   setIsVehicleSelected,
   setSelectedVehicle,
 }) {
+  const [vehicle, setVehicle] = useState({ ...vehicleDate });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    //setVehicle({ ...vehicle, [name]: value });
+    setVehicle({ ...vehicle, [name]: value });
   };
 
   const handleSwitchChange = (e) => {
-    //setVehicle({ ...vehicle, active: e.target.checked });
+    setVehicle({ ...vehicle, active: e.target.checked });
+    saveChanges({ ...vehicle, active: e.target.checked });
   };
+
+  const saveChanges = async(vehicleData)=>{
+        await updateVehicle(vehicleData ? vehicleData :vehicle)
+          .then(({ data }) => {
+            setVehicle(data);
+            setIsVehicleSelected(false);
+            setSelectedVehicle(null);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+    
+      }
+
   return (
     <div style={{ margin: "2rem" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -97,7 +115,11 @@ export default function SingleVehiclePage({
               width: "90%",
             }}
           >
-            <Button variant="contained" startIcon={<EditNoteIcon />}>
+            <Button
+              variant="contained"
+              startIcon={<EditNoteIcon />}
+              onClick={() => saveChanges(null)}
+            >
               Edit
             </Button>
           </div>
@@ -178,7 +200,62 @@ export default function SingleVehiclePage({
                 onChange={handleInputChange}
               />
             </div>
+            <span style={{ marginTop: "1rem", fontWeight: "bold" }}>
+              Start Position
+            </span>
+            <div style={{ display: "flex" }}>
+              <TextField
+                sx={{ marginRight: "1rem", flex: 1 }}
+                fullWidth
+                margin="normal"
+                name="startLat"
+                label="Start Latitude"
+                variant="outlined"
+                value={vehicle.startLat}
+                placeholder="6.808542"
+                onChange={handleInputChange}
+              />
 
+              <TextField
+                sx={{ flex: 1 }}
+                fullWidth
+                margin="normal"
+                name="startLong"
+                label="Start Longitude"
+                variant="outlined"
+                value={vehicle.startLong}
+                placeholder="6.808542"
+                onChange={handleInputChange}
+              />
+            </div>
+            <span style={{ marginTop: "1rem", fontWeight: "bold" }}>
+              End Position
+            </span>
+            <div style={{ display: "flex" }}>
+              <TextField
+                sx={{ marginRight: "1rem", flex: 1 }}
+                fullWidth
+                margin="normal"
+                name="endLat"
+                label="End Latitude"
+                variant="outlined"
+                value={vehicle.endLat}
+                placeholder="6.808542"
+                onChange={handleInputChange}
+              />
+
+              <TextField
+                sx={{ flex: 1 }}
+                fullWidth
+                margin="normal"
+                name="endLong"
+                label="End Longitude"
+                variant="outlined"
+                value={vehicle.endLong}
+                placeholder="6.808542"
+                onChange={handleInputChange}
+              />
+            </div>
             <TextField
               fullWidth
               margin="normal"
@@ -212,9 +289,6 @@ export default function SingleVehiclePage({
           <div style={{ marginBottom: "1rem", marginTop: "1rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <h3>Driver Details</h3>
-              {vehicle.driverId !== null && (
-                <Button endIcon={<OpenInNewIcon />}>view details</Button>
-              )}
             </div>
             {vehicle.driverId === null ? (
               <AssignDriverListModel vehicleId={vehicle.id} />

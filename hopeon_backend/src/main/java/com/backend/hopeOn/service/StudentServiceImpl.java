@@ -160,7 +160,7 @@ public class StudentServiceImpl implements StudentService{
         }
 
         // Fetch the existing student record from the database
-        Optional<com.backend.hopeOn.entity.Student> optionalStudent = studentRepository.findByIdAndActiveIsTrue(student.getId());
+        Optional<com.backend.hopeOn.entity.Student> optionalStudent = studentRepository.findById(student.getId());
         if (optionalStudent.isEmpty()) {
             response.setStatus(HttpStatus.BAD_REQUEST.value());
             response.setMessage("Student not found");

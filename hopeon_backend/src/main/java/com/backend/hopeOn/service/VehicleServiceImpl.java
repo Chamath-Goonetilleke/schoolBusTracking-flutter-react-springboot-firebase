@@ -59,8 +59,8 @@ public class VehicleServiceImpl implements VehicleService {
 
         List<AttendanceResponse> attendance = new ArrayList<>();
 
-        for (com.backend.hopeOn.entity.Student student: vehicleEntity.getStudentList()
-             ) {
+        for (com.backend.hopeOn.entity.Student student : vehicleEntity.getStudentList()
+        ) {
             AttendanceResponse attendResponse = new AttendanceResponse();
             attendResponse.setId(student.getId());
             attendResponse.setRegNo(student.getRegNo());
@@ -71,13 +71,13 @@ public class VehicleServiceImpl implements VehicleService {
 
             List<Schedule> stSchedules = student.getSchedules().stream().filter(schedule -> schedule.getDate().equals(date)).toList();
 
-            if(!stSchedules.isEmpty()){
-                if(Objects.equals(AttendanceType.TO_SCHOOL, type)){
+            if (!stSchedules.isEmpty()) {
+                if (Objects.equals(AttendanceType.TO_SCHOOL, type)) {
                     attendResponse.setAttendance(stSchedules.get(0).getToSchool());
                 } else if (Objects.equals(AttendanceType.TO_HOME, type)) {
                     attendResponse.setAttendance(stSchedules.get(0).getToHome());
                 }
-            }else {
+            } else {
                 attendResponse.setAttendance(false);
             }
 
@@ -134,7 +134,23 @@ public class VehicleServiceImpl implements VehicleService {
         com.backend.hopeOn.entity.Vehicle existingVehicle = vehicleRepository.findById(vehicle.getId())
                 .orElseThrow(() -> new HOException("Vehicle not found"));
 
-        com.backend.hopeOn.entity.Vehicle updatedVehicle = vehicleRepository.save(DomainToEntityMapper(vehicle));
+        existingVehicle.setVehicleNo(vehicle.getVehicleNo());
+        existingVehicle.setType(vehicle.getType());
+        existingVehicle.setColor(vehicle.getColor());
+        existingVehicle.setBrand(vehicle.getBrand());
+        existingVehicle.setModel(vehicle.getModel());
+        existingVehicle.setAvailableSeatCount(existingVehicle.getAvailableSeatCount() + (vehicle.getSeatCount() - existingVehicle.getSeatCount()));
+        existingVehicle.setSeatCount(vehicle.getSeatCount());
+        existingVehicle.setRoute(vehicle.getRoute());
+        existingVehicle.setLocations(vehicle.getLocations());
+        existingVehicle.setActive(vehicle.getActive());
+
+        existingVehicle.setStartLat(vehicle.getStartLat());
+        existingVehicle.setStartLong(vehicle.getStartLong());
+        existingVehicle.setEndLat(vehicle.getEndLat());
+        existingVehicle.setEndLong(vehicle.getEndLong());
+
+        com.backend.hopeOn.entity.Vehicle updatedVehicle = vehicleRepository.save(existingVehicle);
 
         HOResponse<Vehicle> response = new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());

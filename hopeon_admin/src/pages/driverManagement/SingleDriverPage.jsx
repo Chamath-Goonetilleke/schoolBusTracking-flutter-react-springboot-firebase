@@ -20,6 +20,7 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { updateDriver } from "../../service/driverService";
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -55,18 +56,34 @@ const IOSSwitch = styled((props) => (
   },
 }));
 export default function SingleDriverPage({
-  driver,
+  driverData,
   setIsDriverSelected,
   setSelectedDriver,
 }) {
+  const [driver, setDriver] = useState({ ...driverData });
 
-const handleInputChange = (e) => {
-  const { name, value } = e.target;
-  //setDriver({ ...driver, [name]: value });
-};
-const handleSwitchChange = (e) => {
-  //setDriver({ ...driver, active: e.target.checked });
-};
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setDriver({ ...driver, [name]: value });
+  };
+  const handleSwitchChange = (e) => {
+    setDriver({ ...driver, active: e.target.checked });
+    saveChanges({ ...driver, active: e.target.checked });
+  };
+
+  const saveChanges = async(driverData)=>{
+      await updateDriver(driverData ? driverData :driver)
+        .then(({ data }) => {
+          setDriver(data);
+          setIsDriverSelected(false);
+          setSelectedDriver(null);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  
+    }
+
   return (
     <div style={{ margin: "2rem" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -104,7 +121,11 @@ const handleSwitchChange = (e) => {
               width: "90%",
             }}
           >
-            <Button variant="contained" startIcon={<EditNoteIcon />}>
+            <Button
+              variant="contained"
+              startIcon={<EditNoteIcon />}
+              onClick={() => saveChanges(null)}
+            >
               Edit
             </Button>
           </div>
@@ -195,6 +216,7 @@ const handleSwitchChange = (e) => {
               onChange={handleInputChange}
             />
             <TextField
+              sx={{ mb: "4rem" }}
               fullWidth
               margin="normal"
               name="location"
@@ -227,7 +249,6 @@ const handleSwitchChange = (e) => {
           <div style={{ marginBottom: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <h3>Vehicle Details</h3>
-              <Button endIcon={<OpenInNewIcon />}>view details</Button>
             </div>
             <div style={{ marginBottom: "1rem" }}>
               Vehicle No: {driver.vehicleNo}{" "}

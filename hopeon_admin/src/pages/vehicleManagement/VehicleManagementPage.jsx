@@ -11,7 +11,7 @@ export default function VehicleManagementPage() {
   if (isVehicleSelected === true) {
     return (
       <SingleVehiclePage
-        vehicle={selectedVehicle}
+        vehicleDate={selectedVehicle}
         setIsVehicleSelected={setIsVehicleSelected}
         setSelectedVehicle={setSelectedVehicle}
       />

@@ -17,6 +17,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import AssignVehicleModel from "../../components/AssignVehicleModel";
+import { updateStudent } from "../../service/studentService";
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -52,20 +53,13 @@ const IOSSwitch = styled((props) => (
   },
 }));
 
-const grades = [
-  { id: 1, grade: "Grade 5", classes: ["A", "B", "C"] },
-  { id: 2, grade: "Grade 6", classes: ["A", "B", "C"] },
-  { id: 3, grade: "Grade 7", classes: ["A", "B", "C"] },
-  { id: 4, grade: "Grade 8", classes: ["A", "B", "C"] },
-];
+
 
 export default function SingleStudentPage({
   selectedStudent,
   setIsStudentSelected,
   setSelectedStudent,
 }) {
-  const [selectedGrade, setSelectedGrade] = useState(1);
-  const [selectedClasses, setSelectedClasses] = useState([]);
   const [student, setStudent] = useState({ ...selectedStudent });
 
   const handleInputChange = (e) => {
@@ -73,14 +67,23 @@ export default function SingleStudentPage({
     setStudent({ ...student, [name]: value });
   };
   const handleSwitchChange = (e) => {
-    //setDriver({ ...driver, active: e.target.checked });
+    setStudent({ ...student, active: e.target.checked });
+    saveChanges({ ...student, active: e.target.checked });
   };
-  const handleGradeChange = (e) => {
-    const selectedGradeId = e.target.value;
-    const selectedGrade = grades.find((g) => g.id === selectedGradeId);
-    setStudent({ ...student, grade: selectedGradeId, studentClass: "" });
-    setSelectedClasses(selectedGrade.classes || []);
-  };
+
+  const saveChanges = async(studentData)=>{
+    await updateStudent(studentData ? studentData :student)
+      .then(({ data }) => {
+        setStudent(data);
+        setIsStudentSelected(false);
+          setSelectedStudent(null);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+  }
+  
   return (
     <div style={{ margin: "2rem" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -118,7 +121,11 @@ export default function SingleStudentPage({
               width: "90%",
             }}
           >
-            <Button variant="contained" startIcon={<EditNoteIcon />}>
+            <Button
+              variant="contained"
+              startIcon={<EditNoteIcon />}
+              onClick={() => saveChanges(null)}
+            >
               Edit
             </Button>
           </div>
@@ -153,21 +160,6 @@ export default function SingleStudentPage({
             />
             <div style={{ display: "flex" }}>
               <FormControl sx={{ marginTop: 2, marginRight: 1, width: 300 }}>
-                {/* <InputLabel id="grade-label">Grade</InputLabel>
-                <Select
-                  labelId="grade-label"
-                  label="Grade"
-                  name="grade"
-                  value={student.grade}
-                  onChange={handleGradeChange}
-                >
-                  {grades.map((grade) => (
-                    <MenuItem key={grade.id} value={grade.id}>
-                      {grade.grade}
-                    </MenuItem>
-                  ))}
-                </Select>
-                 */}
                 <TextField
                   fullWidth
                   name="grade"
@@ -178,20 +170,6 @@ export default function SingleStudentPage({
                 />
               </FormControl>
               <FormControl sx={{ marginTop: 2, width: 300 }}>
-                {/* <InputLabel id="class-label">Class</InputLabel>
-                <Select
-                  labelId="class-label"
-                  label="Class"
-                  name="studentClass"
-                  value={student.studentClass}
-                  onChange={handleInputChange}
-                >
-                  {selectedClasses.map((cls) => (
-                    <MenuItem key={cls} value={cls}>
-                      {cls}
-                    </MenuItem>
-                  ))}
-                </Select> */}
                 <TextField
                   fullWidth
                   label="Class"
@@ -261,6 +239,7 @@ export default function SingleStudentPage({
               value={student.location}
               onChange={handleInputChange}
             />
+            <div style={{ marginTop: "4rem" }}></div>
           </div>
         </div>
         <div
@@ -285,7 +264,6 @@ export default function SingleStudentPage({
           <div style={{ marginBottom: "2rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <h3>Vehicle Details</h3>
-              <Button endIcon={<OpenInNewIcon />}>view details</Button>
             </div>
             {student.vehicleId === null ? (
               <AssignVehicleModel studentId={student.id} />
@@ -302,7 +280,6 @@ export default function SingleStudentPage({
           <div style={{ marginBottom: "3rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <h3>Driver Details</h3>
-              <Button endIcon={<OpenInNewIcon />}>view details</Button>
             </div>
             {student.vehicleId === null && student.driverId === null ? (
               <div>
