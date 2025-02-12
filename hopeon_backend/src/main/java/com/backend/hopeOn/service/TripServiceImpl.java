@@ -131,15 +131,51 @@ public class TripServiceImpl implements TripService{
         }
 
         Attendance attendance = optionalAttendance.get();
-        attendance.setPicked(true);
 
-        attendanceRepository.save(attendance);
+        if(attendance.isPicked()){
+            response.setStatus(HttpStatus.OK.value());
+            response.setObject(TripEntityToDomain(tripRepository.findById(attendance.getTrip().getId()).get()));
 
+            return response;
+        }else{
+            attendance.setPicked(true);
+
+            Optional<com.backend.hopeOn.entity.Trip> optionalTrip= tripRepository.findById(attendance.getTrip().getId());
+            com.backend.hopeOn.entity.Trip trip = optionalTrip.get();
+
+            trip.setPickedCount(trip.getPickedCount()+1);
+            com.backend.hopeOn.entity.Trip savedTrip =  tripRepository.save(trip);
+
+            attendanceRepository.save(attendance);
+
+            response.setStatus(HttpStatus.OK.value());
+            response.setObject(TripEntityToDomain(savedTrip));
+
+            return response;
+        }
+    }
+
+    @Override
+    public HOResponse<Trip> endTrip(Long id) {
+        Optional<com.backend.hopeOn.entity.Trip> optionalTrip = tripRepository.findById(id);
+        HOResponse<Trip> response = new HOResponse<>();
+
+        if(optionalTrip.isEmpty()){
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Trip not found");
+            return response;
+        }
+        com.backend.hopeOn.entity.Trip trip = optionalTrip.get();
+
+        trip.setStatus(TripStatus.DONE);
+
+        com.backend.hopeOn.entity.Trip savedTrip = tripRepository.save(trip);
 
         response.setStatus(HttpStatus.OK.value());
-        response.setObject(TripEntityToDomain(tripRepository.findById(attendance.getTrip().getId()).get()));
+        response.setObject(TripEntityToDomain(savedTrip));
 
         return response;
+
     }
 
     private com.backend.hopeOn.domain.Attendance AttendanceEntityToDomain(Attendance attendance){

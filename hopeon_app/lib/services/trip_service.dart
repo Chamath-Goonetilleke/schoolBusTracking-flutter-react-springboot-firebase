@@ -106,4 +106,38 @@ class TripService {
     }
   }
 
+  Future<Map<String, dynamic>> endTrip(String id)async{
+    final url = Uri.parse("$baseUrl/endTrip?id=$id");
+
+    try{
+      final response = await http.put(
+          url,
+          headers: {"Content-Type": "application/json"}
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data["status"] == 200) {
+          return {"success": true, "body":data['object']};
+        }
+      }
+      if (response.statusCode == 400) {
+        final data = jsonDecode(response.body);
+
+        if (data["status"] == 400) {
+          return {"success": false, "message": data['message']};
+        }
+      }
+      return {
+        "success": false,
+      };
+    }catch(e){
+      return {
+        "success": false,
+        "message":e
+      };
+    }
+  }
+
 }

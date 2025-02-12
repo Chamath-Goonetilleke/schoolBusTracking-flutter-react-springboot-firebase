@@ -123,12 +123,50 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public HOResponse<Driver> update(Driver driver) {
-        if(validateDriver(driver) != null) {
-            return validateDriver(driver);
+        // Find existing driver entity from the database
+        Optional<com.backend.hopeOn.entity.Driver> optionalDriver = driverRepository.findByIdAndActiveIsTrue(driver.getId());
+
+        if (optionalDriver.isEmpty()) {
+            throw new HOException("Driver not found", HttpStatus.BAD_REQUEST);
         }
 
-        com.backend.hopeOn.entity.Driver updatedDriver = driverRepository.save(domainToEntityMapper(driver));
+        // Get the existing driver entity
+        com.backend.hopeOn.entity.Driver existingDriver = optionalDriver.get();
 
+        // Update user fields (inherited from User class)
+        existingDriver.setFullName(driver.getFullName());
+        existingDriver.setNicNo(driver.getNicNo());
+        existingDriver.setLicenseNo(driver.getLicenseNo());
+        existingDriver.setContactNo(driver.getContactNo());
+        existingDriver.setGender(driver.getGender());
+        existingDriver.setAge(driver.getAge());
+        existingDriver.setLocation(driver.getLocation());
+        existingDriver.setImageUrl(driver.getImageUrl());
+        existingDriver.setActive(driver.getActive());
+
+        // Update password only if a new one is provided
+        if (StringUtils.hasText(driver.getPassword())) {
+            PasswordHashingUtil passwordHashingUtil = new PasswordHashingUtil();
+            existingDriver.setPassword(passwordHashingUtil.hashPassword(driver.getPassword()));
+        }
+
+        // Update driver-specific fields
+        existingDriver.setExperience(driver.getExperience());
+
+        // Handle vehicle assignment (only if provided)
+        if (driver.getVehicleId() != null && (existingDriver.getVehicle() == null || !existingDriver.getVehicle().getId().equals(driver.getVehicleId()))) {
+            Optional<Vehicle> optionalVehicle = vehicleRepository.findById(driver.getVehicleId());
+            if (optionalVehicle.isPresent()) {
+                existingDriver.setVehicle(optionalVehicle.get());
+            } else {
+                throw new HOException("Vehicle not found with ID: " + driver.getVehicleId(), HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        // Save the updated driver entity (this will also update the inherited User fields)
+        com.backend.hopeOn.entity.Driver updatedDriver = driverRepository.save(existingDriver);
+
+        // Prepare response
         HOResponse<Driver> response = new HOResponse<>();
         response.setStatus(HttpStatus.OK.value());
         response.setMessage("Driver updated successfully.");
@@ -136,6 +174,7 @@ public class DriverServiceImpl implements DriverService {
 
         return response;
     }
+
 
     @Override
     public HOResponse<String> delete(Long id) {
@@ -201,7 +240,9 @@ public class DriverServiceImpl implements DriverService {
 
         com.backend.hopeOn.entity.Driver driverEntity = new com.backend.hopeOn.entity.Driver();
         driverEntity.setEmail(driverDomain.getEmail());
-        driverEntity.setPassword(passwordHashingUtil.hashPassword(driverDomain.getPassword()));
+        if(driverDomain.getId() == null){
+            driverEntity.setPassword(passwordHashingUtil.hashPassword(driverDomain.getPassword()));
+        }
         driverEntity.setType(UserType.DRIVER);
         driverEntity.setFullName(driverDomain.getFullName());
         driverEntity.setNicNo(driverDomain.getNicNo());

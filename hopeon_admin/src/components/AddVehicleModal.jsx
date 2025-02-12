@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-    Avatar,
+  Avatar,
   Button,
   Dialog,
   DialogActions,
@@ -60,6 +60,10 @@ export default function AddVehicleModal({ fetchAllVehicles }) {
     seatCount: 0,
     route: "",
     locations: "",
+    startLat: "",
+    startLong: "",
+    endLat: "",
+    endLong: "",
     active: true,
   });
 
@@ -200,7 +204,62 @@ export default function AddVehicleModal({ fetchAllVehicles }) {
               onChange={handleInputChange}
             />
           </div>
+          <span style={{ marginTop: "1rem", fontWeight: "bold" }}>
+            Start Position
+          </span>
+          <div style={{ display: "flex" }}>
+            <TextField
+              sx={{ marginRight: "1rem", flex: 1 }}
+              fullWidth
+              margin="normal"
+              name="startLat"
+              label="Start Latitude"
+              variant="outlined"
+              value={vehicle.startLat}
+              placeholder="6.808542"
+              onChange={handleInputChange}
+            />
 
+            <TextField
+              sx={{ flex: 1 }}
+              fullWidth
+              margin="normal"
+              name="startLong"
+              label="Start Longitude"
+              variant="outlined"
+              value={vehicle.startLong}
+              placeholder="6.808542"
+              onChange={handleInputChange}
+            />
+          </div>
+          <span style={{ marginTop: "1rem", fontWeight: "bold" }}>
+            End Position
+          </span>
+          <div style={{ display: "flex" }}>
+            <TextField
+              sx={{ marginRight: "1rem", flex: 1 }}
+              fullWidth
+              margin="normal"
+              name="endLat"
+              label="End Latitude"
+              variant="outlined"
+              value={vehicle.endLat}
+              placeholder="6.808542"
+              onChange={handleInputChange}
+            />
+
+            <TextField
+              sx={{ flex: 1 }}
+              fullWidth
+              margin="normal"
+              name="endLong"
+              label="End Longitude"
+              variant="outlined"
+              value={vehicle.endLong}
+              placeholder="6.808542"
+              onChange={handleInputChange}
+            />
+          </div>
           <TextField
             fullWidth
             margin="normal"

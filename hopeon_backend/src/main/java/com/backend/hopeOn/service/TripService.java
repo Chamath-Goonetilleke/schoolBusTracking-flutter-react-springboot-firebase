@@ -11,4 +11,5 @@ public interface TripService {
     HOResponse<Trip> save(Trip trip);
     HOResponse<Trip> findTrip(Long driverId, AttendanceType type, LocalDate date);
     HOResponse<Trip> markPickUp(Long attendanceId);
+    HOResponse<Trip> endTrip(Long id);
 }

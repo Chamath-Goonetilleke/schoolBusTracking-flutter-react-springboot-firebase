@@ -24,7 +24,9 @@ public interface VehicleController {
     @GetMapping("/{id}")
     @ResponseBody
     HOResponse<Vehicle> findById(@PathVariable Long id);
-
+    @GetMapping("/getByDriver")
+    @ResponseBody
+    HOResponse<Vehicle> findByDriver(@RequestParam Long driverId);
     @PostMapping()
     @ResponseBody
     HOResponse<Vehicle> save(@RequestBody Vehicle vehicle);

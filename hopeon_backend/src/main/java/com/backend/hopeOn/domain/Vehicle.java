@@ -23,5 +23,9 @@ public class Vehicle extends AbstractModel{
     private String driverName;
     private String driverContactNo;
     private String driverNIC;
+    private String startLat;
+    private String startLong;
+    private String endLat;
+    private String endLong;
     private List<Student> studentList;
 }

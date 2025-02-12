@@ -32,17 +32,16 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
     if (fetchUser != null) {
       setState(() {
         student = fetchUser;
+        user={
+          "id": prefs.getString("user_id"),
+          "email": fetchUser["email"],
+          "type": fetchUser["type"],
+          "fullName": fetchUser["fullName"],
+          "imageUrl": fetchUser["imageUrl"]
+        };
+        _isLoading = false;
       });
     }
-    setState(() {
-      user={
-        "id": prefs.getString("user_id"),
-        "email": prefs.getString("user_email"),
-        "type": prefs.getString("user_type"),
-        "fullName": prefs.getString("full_name"),
-      };
-      _isLoading = false;
-    });
   }
 
   @override
@@ -78,8 +77,9 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: AssetImage("assets/images/profile-parent.png"),
-                ),
+                  backgroundImage: user["imageUrl"] != null
+                      ? NetworkImage(user["imageUrl"]!)
+                      : AssetImage("assets/images/profile-parent.png",),),
                 SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +122,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => ParentTrackMyBusScreen(driverId: student!['driverId'].toString(),)),
+                        builder: (context) => ParentTrackMyBusScreen(driverId: student!['driverId'].toString(),type: "STUDENT",)),
                   );
                 }),
                 _buildFeatureIcon(Icons.notifications, "Alert",  onTap: () {

@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface VehicleRepository extends JpaRepository<Vehicle, Long>, JpaSpecificationExecutor<Vehicle> {
     List<Vehicle> findAllByActiveIsTrue();
     Optional<Vehicle> findByIdAndActiveIsTrue(Long id);
+    Optional<Vehicle> findByDriver_IdAndActiveIsTrue(Long id);
 }

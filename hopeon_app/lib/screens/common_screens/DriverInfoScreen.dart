@@ -73,13 +73,14 @@ class _DriverInfoScreenState extends State<DriverInfoScreen> {
                       child: Column(
                         children: [
                           // Profile Image
-                          const Row(
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               CircleAvatar(
                                 radius: 50,
-                                backgroundImage: NetworkImage(
-                                    "https://www.w3schools.com/howto/img_avatar.png"), // Replace with actual image URL
+                                backgroundImage: driver?["imageUrl"] != null
+                                    ? NetworkImage(driver?["imageUrl"]!)
+                                    : AssetImage("assets/images/profile-driver.png",) // Replace with actual image URL
                               ),
                             ],
                           ),

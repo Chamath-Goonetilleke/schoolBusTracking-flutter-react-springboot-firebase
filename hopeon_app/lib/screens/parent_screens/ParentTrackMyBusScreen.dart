@@ -3,41 +3,61 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverBottomNavBar.dart';
+import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
 import 'package:hopeon_app/services/location_service.dart';
 import 'package:hopeon_app/constants.dart';
 
 class ParentTrackMyBusScreen extends StatefulWidget {
   final String driverId;
-  const ParentTrackMyBusScreen({super.key, required this.driverId});
+  final String type;
+  const ParentTrackMyBusScreen({super.key, required this.driverId, required this.type});
 
   @override
   State<ParentTrackMyBusScreen> createState() => _ParentTrackMyBusScreenState();
 }
 
 class _ParentTrackMyBusScreenState extends State<ParentTrackMyBusScreen> {
-  static const googlePlex = LatLng(6.808542, 79.920273);
-  static const mountainView = LatLng(6.936113, 79.846069);
+  late LatLng startLocation ;
+  late LatLng endLocation;
 
   late final LocationService _locationService;
   LatLng? currentPosition;
   Map<PolylineId, Polyline> polylines = {};
   StreamSubscription<DocumentSnapshot>? _locationSubscription;
-  BitmapDescriptor? busIcon; // Custom marker icon
+  BitmapDescriptor? busIcon;
 
+
+  bool _isLocations = false;
+
+  void loadStartEndPoints()async{
+    _locationService = LocationService(userId: widget.driverId);
+    listenToDriverLocation();
+    Map<String, dynamic>? res = await _locationService.getByDriver(widget.driverId);
+
+    if(res != null){
+      if(res["startLat"]!=null && res["startLong"]!=null && res["endLat"]!=null && res["endLong"]!=null){
+        setState(() {
+          _isLocations = true;
+          startLocation = LatLng(double.parse(res["startLat"]), double.parse(res["startLong"]));
+          endLocation = LatLng(double.parse(res["endLat"]), double.parse(res["endLong"]));
+        });
+        WidgetsBinding.instance
+            .addPostFrameCallback((_) async => await initializeMap());
+        loadCustomMarker();
+
+      }
+    }
+
+  }
+  
   @override
   void initState() {
+    loadStartEndPoints();
     super.initState();
-    _locationService = LocationService(userId: widget.driverId);
-    WidgetsBinding.instance
-        .addPostFrameCallback((_) async => await initializeMap());
-    loadCustomMarker();
-    loadLoc();
-    listenToDriverLocation();
+
   }
 
-  void loadLoc()async{
-   await _locationService.startLocationTracking();
-  }
 
   /// Load custom marker icon
   Future<void> loadCustomMarker() async {
@@ -55,7 +75,6 @@ class _ParentTrackMyBusScreenState extends State<ParentTrackMyBusScreen> {
     generatePolyLineFromPoints(coordinates);
   }
 
-  /// Listens to the driver's location from Firebase and updates the map
   void listenToDriverLocation() {
     _locationSubscription = _locationService
         .getLocationUpdates(widget.driverId)
@@ -83,12 +102,22 @@ class _ParentTrackMyBusScreenState extends State<ParentTrackMyBusScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text("Track Vehicle Location")),
-    body: currentPosition == null || busIcon == null
+    appBar: AppBar(
+      title: const Text(
+        "Track Vehicle Location",
+        style: TextStyle(
+            fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white),
+      ),
+      backgroundColor: const Color.fromRGBO(37, 100, 255, 1.0),
+      automaticallyImplyLeading: false,
+      toolbarHeight: 100.0,
+
+    ),
+    body:  _isLocations ? currentPosition == null || busIcon == null
         ? const Center(child: CircularProgressIndicator())
         : GoogleMap(
-      initialCameraPosition: const CameraPosition(
-        target: googlePlex,
+      initialCameraPosition: CameraPosition(
+        target: currentPosition!,
         zoom: 13,
       ),
       markers: {
@@ -97,19 +126,20 @@ class _ParentTrackMyBusScreenState extends State<ParentTrackMyBusScreen> {
           icon: busIcon!, // Use custom bus icon
           position: currentPosition!,
         ),
-        const Marker(
-          markerId: MarkerId('sourceLocation'),
+        Marker(
+          markerId: const MarkerId('sourceLocation'),
           icon: BitmapDescriptor.defaultMarker,
-          position: googlePlex,
+          position: startLocation,
         ),
-        const Marker(
-          markerId: MarkerId('destinationLocation'),
+        Marker(
+          markerId: const MarkerId('destinationLocation'),
           icon: BitmapDescriptor.defaultMarker,
-          position: mountainView,
+          position: endLocation,
         )
       },
       polylines: Set<Polyline>.of(polylines.values),
-    ),
+    ): const Center(child: Text("No Start and End Locations set"),),
+    bottomNavigationBar: widget.type == "DRIVER" ? DriverBottomNavBar(selectedScreen: 1): ParentBottomNavBar(selectedScreen: 1),
   );
 
   Future<List<LatLng>> fetchPolylinePoints() async {
@@ -117,9 +147,9 @@ class _ParentTrackMyBusScreenState extends State<ParentTrackMyBusScreen> {
 
     final result = await polylinePoints.getRouteBetweenCoordinates(
         request: PolylineRequest(
-          origin: PointLatLng(googlePlex.latitude, googlePlex.longitude),
+          origin: PointLatLng(startLocation.latitude, startLocation.longitude),
           destination:
-          PointLatLng(mountainView.latitude, mountainView.longitude),
+          PointLatLng(endLocation.latitude, endLocation.longitude),
           mode: TravelMode.driving,
         ),
         googleApiKey: googleMapsApiKey);

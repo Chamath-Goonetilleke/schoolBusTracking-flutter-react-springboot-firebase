@@ -57,6 +57,15 @@ public class VehicleControllerImpl implements VehicleController {
     }
 
     @Override
+    public HOResponse<Vehicle> findByDriver(Long driverId) {
+        try {
+            return vehicleService.findByDriver(driverId);
+        } catch (Exception e) {
+            throw new HOException("Error while fetching vehicle by ID: " + e.getMessage());
+        }
+    }
+
+    @Override
     public HOResponse<Vehicle> save(Vehicle vehicle) {
         try {
             return vehicleService.save(vehicle);

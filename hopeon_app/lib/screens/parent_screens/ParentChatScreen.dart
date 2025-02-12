@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
 import 'package:hopeon_app/services/chat_service.dart';
 class ParentChatScreen extends StatefulWidget {
   final String chatId;
@@ -59,7 +60,17 @@ class _ParentChatScreenState extends State<ParentChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.receiverName)),
+      appBar: AppBar(
+        title: Text(
+          widget.receiverName,
+          style: const TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white),
+        ),
+        backgroundColor: const Color.fromRGBO(37, 100, 255, 1.0),
+        automaticallyImplyLeading: false,
+        toolbarHeight: 100.0,
+
+      ),
       body: _isLoading? const Center(child: CircularProgressIndicator(color: Colors.blue,),):Column(
         children: [
           Expanded(
@@ -75,6 +86,7 @@ class _ParentChatScreenState extends State<ParentChatScreen> {
                   itemBuilder: (context, index) {
                     var message = snapshot.data!.docs[index];
                     bool isMe = message['senderId'] == widget.senderId;
+                    bool isFromDriver = message['senderId'] == widget.receiverId;
 
                     return Align(
                       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -82,12 +94,17 @@ class _ParentChatScreenState extends State<ParentChatScreen> {
                         margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: isMe ? Colors.blue[200] : Colors.grey[300],
+                          color: isMe
+                              ? Colors.blue[200]
+                              : isFromDriver
+                              ? Colors.green[200]  // Different color for group messages
+                              : Colors.grey[300],
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(message['text']),
                       ),
                     );
+
                   },
                 );
               },
@@ -112,6 +129,7 @@ class _ParentChatScreenState extends State<ParentChatScreen> {
           ),
         ],
       ),
+      bottomNavigationBar: const ParentBottomNavBar(selectedScreen: 2),
     );
   }
 }

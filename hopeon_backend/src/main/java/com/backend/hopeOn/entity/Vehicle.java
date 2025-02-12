@@ -30,6 +30,17 @@ public class Vehicle extends AbstractEntity{
     private String imageUrl;
     @Column(name = "locations")
     private String locations;
+
+    @Column(name = "start_lat")
+    private String startLat;
+    @Column(name = "start_long")
+    private String startLong;
+
+    @Column(name = "end_lat")
+    private String endLat;
+    @Column(name = "end_long")
+    private String endLong;
+
     @Column(name = "active")
     private Boolean active;
     @OneToOne(mappedBy = "vehicle")

@@ -28,41 +28,39 @@ class ParentService{
     }
   }
 
-  Future<bool> updateStudent(String email, String password) async {
-    final url = Uri.parse("$baseUrl/user/auth");
+  Future<Map<String, dynamic>> updateStudent(Map<String, dynamic> student) async {
+    final url = Uri.parse(baseUrl);
     try {
-      final response = await http.post(
+      final response = await http.put(
         url,
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "email": email,
-          "password": password,
-          "type": "STUDENT"
-        }),
+        body: jsonEncode(student),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
-        if (data["status"] == 200 && data["object"] != null) {
-          final user = data["object"];
-          String userId = user['id'].toString();
-          String userEmail = user['email'];
-          String userType = user['type'];
-          String fullName = user['fullName'];
-
-          // // Save credentials
-          // await saveUserCredentials(userId, userEmail, userType, fullName);
-          return true;
+        if (data["status"] == 200) {
+          return {"success": true, "message":data['message']};
         }
       }
-      return false;
+      if (response.statusCode == 400) {
+        final data = jsonDecode(response.body);
+
+        if (data["status"] == 400) {
+          return {"success": false, "message": data['message']};
+        }
+      }
+      return {
+        "success": false,
+      };
     } catch (e) {
       print("Login error: $e");
-      return false;
+      return {
+        "success": false,
+      };
     }
   }
-
 
 
 }

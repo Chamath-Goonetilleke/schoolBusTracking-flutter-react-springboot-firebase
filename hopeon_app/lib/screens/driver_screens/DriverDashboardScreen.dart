@@ -5,12 +5,7 @@ import 'package:hopeon_app/screens/driver_screens/DriverAttendanceScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverBottomNavBar.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverStudentsScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverTripTrackingScreen.dart';
-import 'package:hopeon_app/screens/parent_screens/AttendanceMarkScreen.dart';
 import 'package:hopeon_app/screens/common_screens/DriverInfoScreen.dart';
-import 'package:hopeon_app/screens/parent_screens/ParentAlertScreen.dart';
-import 'package:hopeon_app/screens/parent_screens/ParentBottomNavBar.dart';
-import 'package:hopeon_app/screens/parent_screens/ParentTrackMyBusScreen.dart';
-import 'package:hopeon_app/screens/common_screens/StudentInfoScreen.dart';
 import 'package:hopeon_app/services/driver_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -37,17 +32,16 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
     if (fetchUser != null) {
       setState(() {
         driver = fetchUser;
+        user={
+          "id": prefs.getString("user_id"),
+          "email": fetchUser["email"],
+          "type": fetchUser["type"],
+          "fullName": fetchUser["fullName"],
+          "imageUrl": fetchUser["imageUrl"]
+        };
+        _isLoading = false;
       });
     }
-    setState(() {
-      user={
-        "id": prefs.getString("user_id"),
-        "email": prefs.getString("user_email"),
-        "type": prefs.getString("user_type"),
-        "fullName": prefs.getString("full_name"),
-      };
-      _isLoading = false;
-    });
   }
 
   @override
@@ -81,10 +75,11 @@ class _DriverDashboardScreenState extends State<DriverDashboardScreen> {
             ),
             child: Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 40,
-                  backgroundImage: AssetImage("assets/images/profile-driver.png"),
-                ),
+                  backgroundImage: user["imageUrl"] != null
+                      ? NetworkImage(user["imageUrl"]!)
+                      : AssetImage("assets/images/profile-driver.png",),),
                 const SizedBox(width: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

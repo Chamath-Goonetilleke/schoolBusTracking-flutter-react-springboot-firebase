@@ -4,6 +4,7 @@ import 'dart:convert';
 
 class DriverService{
   final String baseUrl = "http://10.0.2.2:8080/api/v1/driver";
+
   Future<Map<String, dynamic>?> getDriver(String id) async {
     final url = Uri.parse("$baseUrl/findById?id=$id");
     try {
@@ -26,4 +27,39 @@ class DriverService{
       return null;
     }
   }
+
+  Future<Map<String, dynamic>> updateDriver(Map<String, dynamic> driver) async {
+    final url = Uri.parse(baseUrl);
+    try {
+      final response = await http.put(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(driver),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data["status"] == 200) {
+          return {"success": true, "message":data['message']};
+        }
+      }
+      if (response.statusCode == 400) {
+        final data = jsonDecode(response.body);
+
+        if (data["status"] == 400) {
+          return {"success": false, "message": data['message']};
+        }
+      }
+      return {
+        "success": false,
+      };
+    } catch (e) {
+      print("Login error: $e");
+      return {
+        "success": false,
+      };
+    }
+  }
+
 }

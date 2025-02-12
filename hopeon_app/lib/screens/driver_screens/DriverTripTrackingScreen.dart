@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hopeon_app/screens/driver_screens/DriverDashboardScreen.dart';
 import 'package:hopeon_app/screens/driver_screens/DriverTripProgressScreen.dart';
 import 'package:hopeon_app/services/location_service.dart';
 import 'package:hopeon_app/services/trip_service.dart';
@@ -77,6 +78,27 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen> {
     super.initState();
   }
 
+  void _handleEndTrip(String id) async {
+    _locationService.stopLocationTracking();
+    setState(() {
+      _isLoading = true;
+    });
+
+    Map<String, dynamic> res = await _tripService.endTrip(id);
+    if (res['success']) {
+      _loadToSchoolData();
+      _loadToHomeData();
+      setState(() {
+        _isLoading = false;
+      });
+
+    } else {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,6 +110,17 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen> {
             style: TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 25, color: Colors.white),
           ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        DriverDashboardScreen()
+                ));
+          },
         ),
         backgroundColor: const Color.fromRGBO(37, 100, 255, 1.0),
         toolbarHeight: 100.0, // Increases the height of the AppBar
@@ -123,15 +156,14 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen> {
                           const Divider(),
                           Text("Status: ${_toSchool?["status"] ?? ""}",
                               style: TextStyle(
-                                  fontSize: 22, fontWeight: FontWeight.bold)),
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
                           const SizedBox(
                             height: 20,
                           ),
-                          MaterialButton(
+                          _toSchool?["status"] != "DONE" ?MaterialButton(
                             padding: const EdgeInsets.all(10),
                             color: const Color.fromRGBO(37, 100, 255, 1.0),
                             onPressed: () async {
-                              //await _locationService.startLocationTracking();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -145,19 +177,22 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen> {
                             child: const Text("Track the Trip",
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.white)),
-                          ),
+                          ): SizedBox(),
                           const SizedBox(
                             height: 20,
                           ),
-                          // MaterialButton(
-                          //
-                          //   padding: const EdgeInsets.all(10),
-                          //   color: const Color.fromRGBO(37, 100, 255, 1.0),
-                          //   onPressed: () {},
-                          //   minWidth: double.infinity,
-                          //   child: const Text("To School Trip",
-                          //       style: TextStyle(fontSize: 16, color: Colors.white)),
-                          // ),
+                          const SizedBox(),
+                          _toSchool?["status"] == "IN_PROGRESS" ? MaterialButton(
+
+                            padding: const EdgeInsets.all(10),
+                            color: const Color.fromRGBO(37, 100, 255, 1.0),
+                            onPressed: () {
+                              _handleEndTrip(_toSchool!["id"].toString());
+                            },
+                            minWidth: double.infinity,
+                            child: _isLoading? const CircularProgressIndicator(color: Colors.white): const Text("End Trip",
+                                style: TextStyle(fontSize: 16, color: Colors.white)),
+                          ): SizedBox(),
                         ],
                       ),
                       const SizedBox(
@@ -176,7 +211,7 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen> {
                           const SizedBox(
                             height: 20,
                           ),
-                          MaterialButton(
+                          _toHome?["status"] != "DONE" ? MaterialButton(
                             padding: const EdgeInsets.all(10),
                             color: const Color.fromRGBO(37, 100, 255, 1.0),
                             onPressed: () {
@@ -193,19 +228,21 @@ class _DriverTripTrackingScreenState extends State<DriverTripTrackingScreen> {
                             child: const Text("Track the Trip",
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.white)),
-                          ),
+                          ): SizedBox(),
                           const SizedBox(
                             height: 20,
                           ),
-                          // MaterialButton(
-                          //
-                          //   padding: const EdgeInsets.all(10),
-                          //   color: const Color.fromRGBO(37, 100, 255, 1.0),
-                          //   onPressed: () {},
-                          //   minWidth: double.infinity,
-                          //   child: const Text("To School Trip",
-                          //       style: TextStyle(fontSize: 16, color: Colors.white)),
-                          // ),
+                          _toHome?["status"] == "IN_PROGRESS" ? MaterialButton(
+
+                            padding: const EdgeInsets.all(10),
+                            color: const Color.fromRGBO(37, 100, 255, 1.0),
+                            onPressed: () {
+                              _handleEndTrip(_toHome!["id"].toString());
+                            },
+                            minWidth: double.infinity,
+                            child:  _isLoading? const CircularProgressIndicator(color: Colors.white):const Text("End Trip",
+                                style: TextStyle(fontSize: 16, color: Colors.white)),
+                          ): SizedBox(),
                         ],
                       ),
                       const SizedBox(

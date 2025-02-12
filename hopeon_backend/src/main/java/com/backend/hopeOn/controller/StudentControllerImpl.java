@@ -49,6 +49,15 @@ public class StudentControllerImpl implements StudentController{
     }
 
     @Override
+    public HOResponse<Student> update(Student student) {
+        try {
+            return studentService.update(student);
+        }catch (Exception e){
+            throw new HOException(e.getMessage());
+        }
+    }
+
+    @Override
     public HOResponse<Student> assignVehicle(Long id, Long vehicleId) {
         try {
             return studentService.assignVehicle(id, vehicleId);

@@ -19,7 +19,9 @@ public interface StudentController {
     @GetMapping("/findById")
     @ResponseBody
     HOResponse<Student> findById(@RequestParam Long id);
-
+    @PutMapping
+    @ResponseBody
+    HOResponse<Student> update(@RequestBody Student student);
     @PutMapping("/assignVehicle")
     @ResponseBody
     HOResponse<Student> assignVehicle(@RequestParam Long id, @RequestParam Long vehicleId);

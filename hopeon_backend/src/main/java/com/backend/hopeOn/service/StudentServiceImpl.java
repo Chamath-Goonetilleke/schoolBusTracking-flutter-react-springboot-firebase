@@ -150,8 +150,71 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public HOResponse<Student> update(Student student) {
-        return null;
+        HOResponse<Student> response = new HOResponse<>();
+
+        // Check if student ID is provided
+        if (student.getId() == null) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student ID is required");
+            return response;
+        }
+
+        // Fetch the existing student record from the database
+        Optional<com.backend.hopeOn.entity.Student> optionalStudent = studentRepository.findByIdAndActiveIsTrue(student.getId());
+        if (optionalStudent.isEmpty()) {
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setMessage("Student not found");
+            return response;
+        }
+
+        // Get the existing student entity
+        com.backend.hopeOn.entity.Student existingStudent = optionalStudent.get();
+
+        // Update user fields (inherited from User class)
+        existingStudent.setFullName(student.getFullName());
+        existingStudent.setEmail(student.getEmail());
+        existingStudent.setContactNo(student.getContactNo());
+        existingStudent.setGender(student.getGender());
+        existingStudent.setAge(student.getAge());
+        existingStudent.setLocation(student.getLocation());
+        existingStudent.setImageUrl(student.getImageUrl());
+        existingStudent.setActive(student.getActive());
+
+        // If a new password is provided, update it
+        if (StringUtils.hasText(student.getPassword())) {
+            PasswordHashingUtil passwordHashingUtil = new PasswordHashingUtil();
+            existingStudent.setPassword(passwordHashingUtil.hashPassword(student.getPassword()));
+        }
+
+        // Update student-specific fields
+        existingStudent.setRegNo(student.getRegNo());
+        existingStudent.setGrade(student.getGrade());
+        existingStudent.setStudentClass(student.getStudentClass());
+        existingStudent.setParentName(student.getParentName());
+
+        // Handle vehicle assignment (if provided)
+        if (student.getVehicleId() != null) {
+            Optional<Vehicle> optionalVehicle = vehicleRepository.findByIdAndActiveIsTrue(student.getVehicleId());
+            if (optionalVehicle.isPresent()) {
+                existingStudent.setVehicle(optionalVehicle.get());
+            } else {
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
+                response.setMessage("Vehicle not found with ID: " + student.getVehicleId());
+                return response;
+            }
+        }
+
+        // Save the updated student entity
+        com.backend.hopeOn.entity.Student updatedStudent = studentRepository.save(existingStudent);
+
+        // Prepare and send response
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Student updated successfully");
+        response.setObject(StudentEntityToDomainMapper(updatedStudent));
+
+        return response;
     }
+
 
     @Override
     public HOResponse<String> delete(Long id) {

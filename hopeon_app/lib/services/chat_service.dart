@@ -96,4 +96,45 @@ class ChatService {
     }
 
   }
+
+  Future<void> sendGroupMessage({
+    required String driverId,
+    required List<dynamic> students,
+    required String message,
+  }) async {
+
+    for (var student in students) {
+      String studentId = student['id'].toString();
+
+      // Get chat ID for each student
+      QuerySnapshot chatSnapshot = await _firestore
+          .collection('chats')
+          .where('driverId', isEqualTo: driverId)
+          .where('studentId', isEqualTo: studentId)
+          .get();
+
+      if (chatSnapshot.docs.isNotEmpty) {
+        String chatId = chatSnapshot.docs.first.id;
+
+        // Send the message
+        await _firestore.collection('messages').add({
+          'chatId': chatId,
+          'text': message,
+          'senderId': driverId,
+          'receiverId': studentId,
+          'timestamp': FieldValue.serverTimestamp(),
+          'isRead': true,
+        });
+
+        // Update last message in chat
+        await _firestore.collection('chats').doc(chatId).update({
+          'lastMessage': message,
+          'lastTime': FieldValue.serverTimestamp(),
+          'unreadCount':0
+        });
+      }
+    }
+  }
+
+
 }

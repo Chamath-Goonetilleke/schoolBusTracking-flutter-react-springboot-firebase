@@ -105,6 +105,19 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
+    public HOResponse<Vehicle> findByDriver(Long driverId) {
+        com.backend.hopeOn.entity.Vehicle vehicleEntity = vehicleRepository.findByDriver_IdAndActiveIsTrue(driverId)
+                .orElseThrow(() -> new HOException("Vehicle not found"));
+
+        HOResponse<Vehicle> response = new HOResponse<>();
+        response.setStatus(HttpStatus.OK.value());
+        response.setMessage("Vehicle fetched successfully");
+        response.setObject(EntityToDomainMapper(vehicleEntity));
+
+        return response;
+    }
+
+    @Override
     public HOResponse<Vehicle> save(Vehicle vehicle) {
         com.backend.hopeOn.entity.Vehicle newVehicle = vehicleRepository.save(DomainToEntityMapper(vehicle));
 
@@ -166,6 +179,11 @@ public class VehicleServiceImpl implements VehicleService {
         vehicleDomain.setLocations(vehicleEntity.getLocations());
         vehicleDomain.setActive(vehicleEntity.getActive());
 
+        vehicleDomain.setStartLat(vehicleEntity.getStartLat());
+        vehicleDomain.setStartLong(vehicleEntity.getStartLong());
+        vehicleDomain.setEndLat(vehicleEntity.getEndLat());
+        vehicleDomain.setEndLong(vehicleEntity.getEndLong());
+
         if (vehicleEntity.getDriver() != null) {
             vehicleDomain.setDriverId(vehicleEntity.getDriver().getId());
             vehicleDomain.setDriverName(vehicleEntity.getDriver().getFullName());
@@ -204,6 +222,11 @@ public class VehicleServiceImpl implements VehicleService {
         vehicleEntity.setImageUrl(vehicleDomain.getImageUrl());
         vehicleEntity.setLocations(vehicleDomain.getLocations());
         vehicleEntity.setActive(vehicleDomain.getActive());
+
+        vehicleEntity.setStartLat(vehicleDomain.getStartLat());
+        vehicleEntity.setStartLong(vehicleDomain.getStartLong());
+        vehicleEntity.setEndLat(vehicleDomain.getEndLat());
+        vehicleEntity.setEndLong(vehicleDomain.getEndLong());
 
         if (vehicleDomain.getDriverId() != null) {
             Driver driver = new Driver();

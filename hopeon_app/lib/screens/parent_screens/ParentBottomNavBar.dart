@@ -40,7 +40,7 @@ class _ParentBottomNavBarState extends State<ParentBottomNavBar> {
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
-              ParentTrackMyBusScreen(driverId: student!['driverId'].toString(),),
+              ParentTrackMyBusScreen(driverId: student!['driverId'].toString(), type: "STUDENT",),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var fadeAnimation = Tween(begin: 1.0, end: 1.0).animate(animation);
             return FadeTransition(opacity: fadeAnimation, child: child);
@@ -78,7 +78,7 @@ class _ParentBottomNavBarState extends State<ParentBottomNavBar> {
         context,
         PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) =>
-              ParentProfileScreen(),
+              const ParentProfileScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             var fadeAnimation = Tween(begin: 1.0, end: 1.0).animate(animation);
             return FadeTransition(opacity: fadeAnimation, child: child);

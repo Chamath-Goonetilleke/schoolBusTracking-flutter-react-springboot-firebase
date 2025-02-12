@@ -17,4 +17,7 @@ public interface TripController {
     @PutMapping
     @ResponseBody
     HOResponse<Trip> markPickUp(@RequestParam Long attendanceId);
+    @PutMapping("/endTrip")
+    @ResponseBody
+    HOResponse<Trip> endTrip(@RequestParam Long id);
 }

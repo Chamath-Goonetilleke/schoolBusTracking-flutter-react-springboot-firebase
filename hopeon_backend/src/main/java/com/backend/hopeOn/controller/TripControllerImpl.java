@@ -50,4 +50,16 @@ public class TripControllerImpl implements TripController{
             return response;
         }
     }
+
+    @Override
+    public HOResponse<Trip> endTrip(Long id) {
+        try {
+            return tripService.endTrip(id);
+        }catch (Exception e) {
+            HOResponse<Trip> response = new HOResponse<>();
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.setMessage(e.getMessage());
+            return response;
+        }
+    }
 }
