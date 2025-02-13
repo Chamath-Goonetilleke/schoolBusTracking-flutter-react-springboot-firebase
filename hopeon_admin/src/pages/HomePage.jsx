@@ -17,11 +17,7 @@ import DriverManagementPage from "./driverManagement/DriverManagementPage";
 import VehicleManagementPage from "./vehicleManagement/VehicleManagementPage";
 
 const NAVIGATION = [
-  {
-    segment: "dashboard",
-    title: "Dashboard",
-    icon: <DashboardIcon />,
-  },
+  
   {
     segment: "students",
     title: "Student Management",
@@ -84,7 +80,7 @@ DemoPageContent.propTypes = {
 };
 
 function DashboardLayoutNoMiniSidebar(props) {
-  const router = useDemoRouter("/dashboard");
+  const router = useDemoRouter("/students");
 
   return (
     <AppProvider
