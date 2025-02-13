@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ScheduleService {
-  final String baseUrl = "http://10.0.2.2:8080/api/v1";
+  final String baseUrl = "http://13.61.16.165:8080/api/v1";
 
   Future<Map<String, dynamic>> saveSchedule(Map<String, dynamic> schedule) async {
     final url = Uri.parse("$baseUrl/schedule");

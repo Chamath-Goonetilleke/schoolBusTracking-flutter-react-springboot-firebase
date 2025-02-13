@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AlertService {
-  final String baseUrl = "http://10.0.2.2:8080/api/v1/alert";
+  final String baseUrl = "http://13.61.16.165:8080/api/v1/alert";
 
   Future<Map<String, dynamic>> saveAlert(String message, String driverId) async {
     final url = Uri.parse("$baseUrl?message=$message&driverId=$driverId");

@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class DriverService{
-  final String baseUrl = "http://10.0.2.2:8080/api/v1/driver";
+  final String baseUrl = "http://13.61.16.165:8080/api/v1/driver";
 
   Future<Map<String, dynamic>?> getDriver(String id) async {
     final url = Uri.parse("$baseUrl/findById?id=$id");
