@@ -256,12 +256,6 @@ export default function SingleDriverPage({
             <div>Type, Brand, Model: {driver.vehicleDetails}</div>
           </div>
           <Divider style={{ marginBottom: "1rem" }} />
-
-          <div>
-            <Button sx={{ width: "100%" }} variant="outlined">
-              Reset Password
-            </Button>
-          </div>
         </div>
       </div>
     </div>

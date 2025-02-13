@@ -124,7 +124,7 @@ export default function SingleStudentPage({
             <Button
               variant="contained"
               startIcon={<EditNoteIcon />}
-              onClick={() => saveChanges(null)}
+              onClick={() => saveChanges()}
             >
               Edit
             </Button>
@@ -293,11 +293,6 @@ export default function SingleStudentPage({
                 <div>Contact Number: {student.vehicleNo}</div>
               </div>
             )}
-          </div>
-          <div>
-            <Button sx={{ width: "100%" }} variant="outlined">
-              Reset Password
-            </Button>
           </div>
         </div>
       </div>
